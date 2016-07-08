@@ -3,20 +3,32 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Katharsis JSON-API Documentation's documentation!
-============================================================
+Welcome to Katharsis JSON-API documentation!
+============================================
 
-Contents:
+Katharsis provides means to easily expose resources over the REST interface.
+If you want to take a deeper look on the concepts behind Katharsis, this is page for you!
+
+The main documentation for the site is organized into a couple sections:
+
+* :ref:`user-docs`
+
+Information about how to contribute is also available:
+
+* :ref:`contributor-docs`
+
+.. _user-docs:
 
 .. toctree::
-   :maxdepth: 2
+  :maxdepth: 2
+  :caption: User Documentation
 
+  user-docs
 
+.. _contributor-docs:
 
-Indices and tables
-==================
+.. toctree::
+  :maxdepth: 2
+  :caption: Contributor documentation
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+  how-to-contribute
