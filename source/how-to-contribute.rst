@@ -10,8 +10,8 @@ We use gitter to chat with team members `Katharsis Gitter`_ .
 If you have found a bug, please submit a patch to the repository.
 You'll find all of them on our `Katharsis Github`_ project.
 
-Do you think Katharsis should do X?
------------------------------------
+I think Katharsis should do X?
+------------------------------
 
 If you have an idea for a new feature that Katharsis should support it is a good idea to start a discussion about it.
 You can start discussions on `Katharsis Gitter`_ or create a new issue on `Katharsis Github`_ .

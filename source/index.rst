@@ -20,6 +20,7 @@ For the latest documentation please visit http://katharsis-jsonapi.readthedocs.i
 The main documentation for the site is organized into a couple sections:
 
 * :ref:`user-docs`
+* :ref:`design-docs`
 
 Information about how to contribute is also available:
 
@@ -32,6 +33,14 @@ Information about how to contribute is also available:
   :caption: User Documentation
 
   user-docs
+
+.. _design-docs:
+
+.. toctree::
+  :maxdepth: 2
+  :caption: Design and architecture documentation
+
+  katharsis-design
 
 .. _contributor-docs:
 
