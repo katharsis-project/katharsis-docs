@@ -126,7 +126,7 @@ The registry has the following interface:
        * <p/>
        * (source resource) -> ( target resource , target resource class )
        */
-      Map<String, Map<String, Class<?>>> getRelationships()
+      Map<String, Map<String, Class<?>>> getRelationships();
   }
 
 
@@ -203,6 +203,23 @@ We also need to be able to perform the reverse operation, from a json request bo
 We use currently use ``Jackson`` as a serialization framework. We build a Jackson module using ``JsonApiModuleBuilder``.
 If you need to change anything about how json is serializaed or deserialzied you can look in this class.
 
+We always serialize an instance of ``JsonApiDocument``. Repositories however can respond with basic resources.
+In that case the ``JsonApiDocument`` is built by the library by wrapping the response.
 
+Currently we have:
+
+* ``DataResponse`` - with ``SingleResponse`` for single resources or ``CollectionResponse`` for collection responses
+* ``ErrorResponse`` - for error responses
+
+There are two strategies that we consider:
+
+#. Repositories return instances of Resources
+  In this case we wrap the return object (instance of class annotated with ``@JsonApiResource`` ) in a ``@JsonApiDocument``.
+  The library code also takes care of calling the methdos for ``included`` resources.
+#. Repositories return instance of ``JsonApiDocument``
+  This requires users to do more work but is more efficient and can provide a much better controll over response.
+  You can customise almost all of the response, including: meta information, links, included relationships, etc.
+
+   
 .. _`json api`: http://jsonapi.org/
 .. _`repository pattern`: http://martinfowler.com/eaaCatalog/repository.html
