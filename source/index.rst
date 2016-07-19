@@ -49,3 +49,5 @@ Information about how to contribute is also available:
   :caption: Contributor documentation
 
   how-to-contribute
+  how-to-update-website
+  meeting-notes
