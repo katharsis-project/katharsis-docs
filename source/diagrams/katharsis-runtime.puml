@@ -1,0 +1,103 @@
+@startuml
+
+title Katharsis Runtime
+
+hide footbox
+
+participant "Web framework" as Framework
+participant "Katharsis integration" as IntegrationCode
+
+participant JsonApiPath
+participant Request
+
+participant "JsonApi Request Handler" as RequestHandler
+
+'participant "Json API serializer" as Serializer
+'participant "Json API deserializer" as Deserializer
+
+participant RepositoryRegistry
+participant "Repository Adapter" as RepoAdapters
+
+[-> Framework: intercept HTTP JSON API request
+
+Framework --> IntegrationCode: handle()
+
+create JsonApiPath
+IntegrationCode --> JsonApiPath: <<parses URL to>>
+activate JsonApiPath
+
+note over JsonApiPath
+  Request URL parsed according
+  to JSON API rules.
+  Helps us identify IntegrationCode
+  to delegate to.
+end note
+
+IntegrationCode <-- JsonApiPath
+deactivate JsonApiPath
+
+create Request
+IntegrationCode --> Request
+activate Request
+
+note over Request
+  Contains information regarding
+  the HTTP request.
+end note
+
+IntegrationCode <-- Request
+deactivate Request
+
+IntegrationCode --> RequestHandler: call via JsonApiDispatcher
+activate RequestHandler
+
+note over RequestHandler
+  We have handlers for each Request
+  type: GET, POST, etc.
+  Uses **Request** to access data.
+end note
+
+RequestHandler --> RepositoryRegistry: lookup Repository adapter
+activate RepositoryRegistry
+
+note over RepositoryRegistry
+  Used to lookup a Repository Adapter or
+  a RelationshipRepository Adapter based on
+  information from JsonApiPath .
+end note
+
+RequestHandler <-- RepositoryRegistry
+deactivate RepositoryRegistry
+
+RequestHandler --> RepoAdapters: call repository method
+activate RepoAdapters
+
+note over RepositoryRegistry
+  Used to lookup a Repository Adapter or
+  a RelationshipRepository Adapter based on
+  information from JsonApiPath .
+end note
+
+RequestHandler <-- RepoAdapters: return Resources/Json API Document
+deactivate RepoAdapters
+
+RequestHandler <-- RequestHandler: do optional extra processing (Includes, etc)
+IntegrationCode <-- RequestHandler: return Resources/Json API Document
+
+deactivate RequestHandler
+deactivate IntegrationCode
+
+Framework <-- IntegrationCode: send Json API Document to client
+
+[<- Framework: serialize response as JSON API
+
+
+legend
+  The current diagram is simplified. Not all calls are represented.
+
+  **Web Framework** can be Servlet, JAX-RS, Vertx, Spring WebMVC, etc.
+  **JsonApi RequestHandler** has implementation for GET, POST, etc.
+
+end legend
+
+@enduml

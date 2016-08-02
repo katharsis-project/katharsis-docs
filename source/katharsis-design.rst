@@ -13,7 +13,7 @@ You can use it to add `json api`_ support to your web applications and build ``A
 
 Currently, you can use Katharsis to build servers and you can't use it to make requests to other `json api`_ servers.
 We are working on this featuer and it should be available in version 3.x.
-Check https://github.com/katharsis-project/katharsis-core/issues/315 to see the status.
+Check https://github.com/katharsis-project/katharsis-framework/ to see the status.
 
 Concepts used by Katharsis
 --------------------------
@@ -61,6 +61,17 @@ Katharsis bootstrap
 -------------------
 
 When the application starts, the library performs these tasks.
+
+.. figure:: images/katharsis-bootstrap.png
+  :scale: 75%
+  :alt: Katharsis bootstrap process
+
+  Katharsis bootstrap process
+
+During the Bootstrap phase Katharsis scans the classpath for Resources, Repository and RelationshipRepository classes and builds a **ResourceRegistry** - simple data holder.
+It uses the information from **ResourceRegistry** to instantiate **Adapters** for Repositories and Relationship Repositories.
+All of these are bundled inside a **RepositoryRegistry**, the result of the **bootstrap** process.
+
 
 Resource discovery
 ~~~~~~~~~~~~~~~~~~
@@ -168,8 +179,14 @@ It has a single method ``handle`` thar receives the Request and builds up a ``Re
   }
 
 
-Katharsis running phase
------------------------
+Katharsis request processing
+----------------------------
+
+.. figure:: images/katharsis-runtime.png
+  :scale: 75%
+  :alt: Katharsis request processing
+
+  Katharsis request processing
 
 
 Request processing
@@ -214,12 +231,15 @@ Currently we have:
 There are two strategies that we consider:
 
 #. Repositories return instances of Resources
+
   In this case we wrap the return object (instance of class annotated with ``@JsonApiResource`` ) in a ``@JsonApiDocument``.
   The library code also takes care of calling the methdos for ``included`` resources.
+
 #. Repositories return instance of ``JsonApiDocument``
+
   This requires users to do more work but is more efficient and can provide a much better controll over response.
   You can customise almost all of the response, including: meta information, links, included relationships, etc.
 
-   
+
 .. _`json api`: http://jsonapi.org/
 .. _`repository pattern`: http://martinfowler.com/eaaCatalog/repository.html

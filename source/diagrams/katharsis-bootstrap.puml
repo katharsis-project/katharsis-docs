@@ -1,0 +1,71 @@
+@startuml
+
+title Katharsis bootstrap
+
+hide footbox
+
+participant "DefaultRepositoryRegistry.build()" as RepoFactory
+participant ResourceRegistry
+participant "Repository Adapters" as RepoAdapters
+participant "Relationship Adapters" as RelationshipAdapters
+
+
+[--> RepoFactory : initialize Katharsis
+activate RepoFactory
+
+create ResourceRegistry
+RepoFactory --> ResourceRegistry: << scan classpath for resources>>
+activate ResourceRegistry
+
+note over ResourceRegistry
+  Holds list of classes
+  * Resources
+  * Repositories
+  * Relationship Repositories
+end note
+
+create RepoAdapters
+RepoFactory --> RepoAdapters: instantiate repositories
+activate RepoAdapters
+
+note over RepoAdapters
+  User defined.
+  Implement the Json API methods for
+  a **Resource**:
+    * find
+    * findAll
+    * save
+    * etc..
+end note
+
+
+create RelationshipAdapters
+RepoFactory --> RelationshipAdapters: instantiate relationship repositories
+activate RelationshipAdapters
+
+note over RelationshipAdapters
+  User defined.
+  Implement the Json API relationship
+  methods for a **Resource**
+end note
+
+RepoFactory <-- RepoAdapters
+deactivate RepoAdapters
+
+RepoFactory <-- RelationshipAdapters
+deactivate RelationshipAdapters
+
+RepoFactory <-- ResourceRegistry
+deactivate ResourceRegistry
+
+[<- RepoFactory: return RepositoryRegistry
+
+legend
+  During the Bootstrap phase Katharsis scans the classpath for Resources, Repository and RelationshipRepository
+  classes and builds a **ResourceRegistry** - simple data holder.
+
+  It uses the information from **ResourceRegistry** to instantiate **Adapters** for Repositories and Relationship Repositories.
+  All of these are bundled inside a **RepositoryRegistry**, the result of the **bootstrap** process.
+end legend
+
+@enduml
