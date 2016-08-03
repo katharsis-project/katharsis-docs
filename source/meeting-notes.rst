@@ -5,7 +5,7 @@ One of the main goal of the Katharsis Team is to support the community, that is 
 
 This page contains executive summary of each public meeting that had been held.
 
-Meeting notes - 13.07.2015
+Meeting notes - 13.07.2016
 ------------------------------
 
 * Framework integrations (e.g. katharsis-rs, katharsis-spring) should be merged with katharsis-core to allow easier building process
