@@ -50,8 +50,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Katharsis JSON-API Documentation'
-copyright = '2016, Ioan Eugen Stan <ieugen@netdava.com>, Patryk Orwat, Błażej Krysiak'
-author = 'Ioan Eugen Stan <ieugen@netdava.com>, Patryk Orwat, Błażej Krysiak'
+copyright = '2016, Ioan Eugen Stan <ieugen@netdava.com>, Patryk Orwat, Blazej Krysiak'
+author = 'Ioan Eugen Stan <ieugen@netdava.com>, Patryk Orwat, Blazej Krysiak'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
