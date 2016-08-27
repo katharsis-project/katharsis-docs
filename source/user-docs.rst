@@ -7,10 +7,10 @@ Katharsis provides means to easily expose resources over the REST interface. If 
 Requirements
 ------------
 
-Below are listed dependencies used in Katharsis that project has to meet to be compatibile with latest library version:
+Below are listed dependencies used in Katharsis that project has to meet to be compatible with latest library version:
 
 .. note::
-  Katharis library requires minimum Java 7 to build and run.
+  Katharsis library requires minimum Java 7 to build and run.
 
 
 ``katharsis-core``
@@ -174,7 +174,7 @@ The example below shows a sample class which contains a definition of a field wh
 JsonApiToOne
 ~~~~~~~~~~~~
 
-Indicates an association to single value which need to be handled by a separate ``RelationshipRepository``.
+Indicates an association to single value which needs to be handled by a separate ``RelationshipRepository``.
  A type of the field has to be a valid resource.
 
 The example below shows a sample class which contains this kind of relationship.
@@ -326,8 +326,7 @@ RelationshipRepository
 Each relationship defined in Katharsis (annotation @JsonApiToOne and @JsonApiToMany) must have a relationship repository defined.
 
 Base unidirectional repository responsible for operations on relations.
-All of the methods in this interface have fieldName field as last parameter.
-It solves a problem of many relationships between the same resources.
+All of the methods in this interface have fieldName field as their last parameter to solve the problem of many relationships between the same resources.
 
 * ``setRelation(T source, D_ID targetId, String fieldName)``
   Sets a resource defined by targetId to a field fieldName in an instance source. If no value is to be set, null value is passed.
@@ -356,15 +355,14 @@ Nevertheless, it should be avoided because of potential future problems when add
 Annotated repositories
 ~~~~~~~~~~~~~~~~~~~~~~
 
-A resource repository can be defined not by implementing ``ResourceRepository`` or ``RelationshipRepository`` interface,
-but using ``JsonApiResourceRepository`` or ``JsonApiRelationshipRepository`` annotations from ``io.katharsis.repository.annotations`` package.
+A resource repository can also be defined using the ``JsonApiResourceRepository`` or ``JsonApiRelationshipRepository`` annotations from ``io.katharsis.repository.annotations`` package.
 
 Defining the repositories this way has two benefits:
 
-* It's not needed define all of the methods i.e. read-only resources might have just reading methods defined
+* It's not necessary to define all of the methods i.e. read-only resources might have just reading methods defined
 * Additional parameters can be added to the methods like authentication, request headers or cookies
 
-Along with the required parameters for each methods (like resource identifier in ``JsonApiFindOne``) default supported type is ``QueryParams`` which provides parsed set of query parameters.
+Along with the required parameters for each methods (like the resource identifier in ``JsonApiFindOne``), the default supported type is ``QueryParams``, which provides a set of parsed query parameters.
 Each Katharsis integration provides different set of supported parameters.
 This list can be found in JAX-RS and Servlet integration sections.
 
@@ -372,23 +370,23 @@ A list below defines a mapping of ``ResourceRepository`` methods to annotations:
 
 * ``findOne(ID, QueryParams) -> JsonApiFindOne``
 
-  The first parameter has to be resource's id. The method has to return one resource.
+  The first parameter must be a resource's id. This method must return one resource.
 
 * ``findAll(QueryParams) -> JsonApiFindAll``
 
-  The method has to return a list of resources.
+  This method must return a list of resources.
 
 * ``findAll(Iterable<ID>, QueryParams) -> JsonApiFindAllWithIds``
 
-  The first parameter has to be a list of resource ids. The method has to return a list of resources.
+  The first parameter must be a list of resource ids. This method must return a list of resources.
 
 * ``save(S) -> JsonApiSave``
 
-  The first parameter has to be resource. The method has to return one resource.
+  The first parameter must be a resource. This method must return one resource.
 
 * ``delete(ID) -> JsonApiDelete``
 
-  The first parameter has to be resource's id.
+  The first parameter must be a resource's id.
 
 
 A list below defines a mapping of ``RelationshipRepository`` methods to annotations:
@@ -399,7 +397,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
 
   #. Instance of a source resource
   #. Instance of a relationship to be set
-  #. Relationship's filed name
+  #. Relationship's field name
 
 * ``setRelations(T, Iterable<D_ID>, String) -> JsonApiSetRelations``
 
@@ -407,7 +405,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
 
   #. Instance of a source resource
   #. ``Iterable`` of relationships to be set
-  #. Relationship's filed name
+  #. Relationship's field name
 
 * ``addRelations(T, Iterable<D_ID>, String) -> JsonApiAddRelation``
 
@@ -415,7 +413,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
 
   #. Instance of a source resource
   #. Iterable of relationships to be add
-  #. Relationship's filed name
+  #. Relationship's field name
 
 * ``removeRelations(T, Iterable<D_ID>, String) -> JsonApiRemoveRelation``
 
@@ -423,7 +421,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
 
   #. Instance of a source resource
   #. Iterable of relationships to be removed
-  #. Relationship's filed name
+  #. Relationship's field name
 
 * ``findOneTarget(T_ID, String, QueryParams) -> JsonApiFindOneTarget``
 
@@ -469,7 +467,7 @@ Sorting
 
 .. note::
 
-  Katharsis implementation differs form JSON API definition of sorting in order to fit standard query parameter serializing strategy and maximize effective processing of data.
+  Katharsis implementation differs from JSON API definition of sorting in order to fit standard query parameter serializing strategy and maximize effective processing of data.
 
 Sorting information for the resources can be achieved by providing ``sort`` parameter.
 The format for sorting: ``sort[ResourceType][property|operator]([property|operator])* = "value"``
@@ -511,7 +509,7 @@ Sparse Fieldsets
 
 .. note::
 
-  Katharsis implementation differs form JSON API definition of sparse field set in
+  The Katharsis implementation differs from JSON API definition of sparse field set in
   order to fit standard query parameter serializing strategy and maximize effective processing of data.
 
 Information about fields to include in the response can be achieved by providing ``fields`` parameter.
@@ -548,8 +546,8 @@ Examples:
 Error Handling
 --------------
 
-Processing errors in Katharsis can be handled by throwing an exception and providing corresponding exception mapper.
-It will define mapping to proper JSON API error response.
+Processing errors in Katharsis can be handled by throwing an exception and providing
+a corresponding exception mapper which defines mapping to a proper JSON API error response.
 
 Throwing an exception...
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -593,7 +591,7 @@ Sample exception is nothing more than a simple runtime exception:
 Class responsible for mapping the exception should:
 
 * be annotated with ExceptionMapperProvider
-* implements JsonApiExceptionMapper interface
+* implement JsonApiExceptionMapper interface
 
 Sample exception mapper:
 
@@ -624,29 +622,29 @@ Meta Information
 ----------------
 
 There is a special interface which can be added to resource repositories to provide meta information: ``io.katharsis.repository.MetaRepository``.
-It contains a single method ``MetaInformation getMetaInformation(Iterable<T> resources)`` which return meta information object that implements a marker ``interface io.katharsis.response.MetaInformation``.
+It contains a single method ``MetaInformation getMetaInformation(Iterable<T> resources)`` which return meta information object that implements the marker ``interface io.katharsis.response.MetaInformation``.
 
-If you want to add meta information along with the responses, all repositories, that is those that implement ``ResourceRepository`` and ``RelationshipRepository``, must implement ``MetaRepository``.
+If you want to add meta information along with the responses, all repositories (those that implement ``ResourceRepository`` and ``RelationshipRepository``) must implement ``MetaRepository``.
 
-When using annotated versions of repositories, a method that provides ``MetaInformation`` object should be annotated with ``JsonApiMeta`` and the first parameter of the method has to be a list of resources.
+When using annotated versions of repositories, a method that returns a ``MetaInformation`` object should be annotated with ``JsonApiMeta`` and the first parameter of the method must be a list of resources.
 
 Links Information
 -----------------
 
 There is a special interface which can be added to resource repositories to provide links information: ``io.katharsis.repository.LinksRepository``.
-It contains a single method ``LinksInformation getLinksInformation(Iterable<T> resources)`` which return links information object that implements a marker interface ``io.katharsis.response.LinksInformation``.
+It contains a single method ``LinksInformation getLinksInformation(Iterable<T> resources)`` which return links information object that implements the marker ``interface io.katharsis.response.LinksInformation``.
 
-If you want to add meta information along with the responses, all repositories, that is those that implement ``ResourceRepository`` and ``RelationshipRepository``, must implement ``LinksRepository``.
+If you want to add meta information along with the responses, all repositories (those that implement ``ResourceRepository`` and ``RelationshipRepository``), must implement ``LinksRepository``.
 
-When using annotated versions of repositories, a method that provides ``LinksInformation`` object should be annotated with ``JsonApiLinks`` and the first parameter of the method has to be a list of resources.
+When using annotated versions of repositories, a method that returns a ``LinksInformation`` object should be annotated with ``JsonApiLinks`` and the first parameter of the method has to be a list of resources.
 
 
 JAX-RS integration
 ------------------
 
-Katharsis allows integration with JAX-RS environments trough the usage of JAX-RS specification. Under the hood there is a @PreMatching filter which checks each request for JSON API processing.
+Katharsis allows integration with JAX-RS environments through the usage of JAX-RS specification. Under the hood there is a @PreMatching filter which checks each request for JSON API processing.
 
-There are several steps required to integrate Katharsis into JAX-RS application.
+There are several steps required to integrate Katharsis into a JAX-RS application.
 
 Instantiation of a JsonServiceLocator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -659,7 +657,6 @@ Katharsis require an instance of every resources repository it finds. To provide
 
 Instantiation of a KatharsisFeature
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 Created instance of ``JsonServiceLocator`` has to be provided to new instance of ``KatharsisFeature`` along with Jackson Databind ObjectMapper.
 
@@ -678,9 +675,9 @@ All of them are defined in KatharsisProperties class:
 * ``katharsis.config.core.resource.domain``
 
   Domain name as well as protocol and optionally port number used when building links objects in responses i.e. http://katharsis.io.
-  The value cannot end with ``/``.
+  The value must not end with ``/``.
 
-* ``katharsis.config.web.path.prefix (Optional)``
+* ``katharsis.config.web.path.prefix`` (Optional)
 
   Default prefix of a URL path used in two cases:
 
@@ -717,9 +714,9 @@ There are two ways of integrating katharsis using Servlets:
 Integrating using a Servlet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To integrate katharsis using a servlet several steps are required.
-The first one is to create a class that extends ``AbstractKatharsisServlet`` and will provide required configuration to the library.
-A code below shows a sample implementation.
+To integrate Katharsis using a servlet several steps are required.
+The first one is to create a class that extends ``AbstractKatharsisServlet`` and will provide required configuration for the library.
+The code below shows a sample implementation:
 
 .. code-block:: java
 
@@ -759,8 +756,8 @@ A code below shows a sample implementation.
 
   }
 
-The newly created servlet has to be added to ``web.xml`` file or other deployment descriptor.
-A code below shows a sample ``web.xml`` file with properly defined and configured servlet
+The newly created servlet must be added to the ``web.xml`` file or to another deployment descriptor.
+The code below shows a sample ``web.xml`` file with a properly defined and configured servlet:
 
 .. code-block:: java
 
@@ -787,9 +784,9 @@ A code below shows a sample ``web.xml`` file with properly defined and configure
 Integrating using a filter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To integrate katharsis using a filter several steps are required.
-The first one is to create a class that extends ``AbstractKatharsisFilter`` and will provide required configuration to the library.
-A code below shows a sample implementation.
+To integrate Katharsis using a filter, several steps are required.
+First, create a class that extends ``AbstractKatharsisFilter``, which will provide required configuration for the library.
+The code below shows a sample implementation:
 
 .. code-block:: java
 
@@ -836,10 +833,10 @@ A code below shows a sample implementation.
       }
   }
 
-The newly created filter has to be added to ``web.xml`` file or other deployment descriptor.
+The newly created filter must be added to ``web.xml`` file or other deployment descriptor.
 A code below shows a sample ``web.xml`` file with properly defined and configured filter
 
-.. code-block:: java
+.. code-block:: xml
 
   <web-app>
     <filter>
@@ -868,7 +865,7 @@ A code below shows a sample ``web.xml`` file with properly defined and configure
 Repository supported parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Servlet integration allows a developer to pass the following types of parameters in repository methods:
+Servlet integration allows the following types of parameters in repository methods:
 
 * An instance of ``ServletContext``
 * An instance of ``HttpServletRequest``
@@ -878,8 +875,8 @@ Servlet integration allows a developer to pass the following types of parameters
 Spring integration
 ------------------
 
-Katharsis provide a simple Spring Boot integration using a ``@Configuration`` annotated class ``KatharsisConfigV2``.
-Using this class the only thing needed to allow Katharsis process requests is to configure parameters.
+Katharsis provides a simple Spring Boot integration using the ``@Configuration`` annotated class ``KatharsisConfigV2``.
+Using this class, the only thing needed to allow Katharsis process requests is parameter configuration.
 An example ``application.properties`` file is presented below.
 
 .. code-block:: bash
@@ -893,7 +890,7 @@ Spring integration uses katharsis-servlet ``AbstractKatharsisFilter`` to fetch t
 Repository supported parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Spring integration allows a developer to pass all of the types supported by Spring which doesn't operate on the response.
+Spring integration allows a developer to pass all of the types supported by Spring which don't operate on the response.
 
 
 Vertx integration
@@ -908,14 +905,14 @@ Katharsis provides ``Handler`` that intercepts requests and delegates them to Ka
   }
 
 
-Simple useage example that creates the handler:
+Simple usage example that creates the handler:
 
 .. code-block:: java
 
   KatharsisHandler katharsisGlue = KatharsisHandlerFactory.create(Main.class.getPackage().getName(), "/api");
   router.route("/api/*").handler(katharsisGlue);
 
-Advanced usage that shows how you can inject custom paramters in Katharsis repository methods.
+Advanced usage that shows how you can inject custom parameters in Katharsis repository methods:
 
 .. code-block:: java
 

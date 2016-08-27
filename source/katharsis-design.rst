@@ -12,7 +12,7 @@ It processes ``HTTP`` web requests in `json api`_ format and sends back response
 You can use it to add `json api`_ support to your web applications and build ``API``'s.
 
 Currently, you can use Katharsis to build servers and you can't use it to make requests to other `json api`_ servers.
-We are working on this featuer and it should be available in version 3.x.
+We are working on this feature and it should be available in version 3.x.
 Check https://github.com/katharsis-project/katharsis-framework/ to see the status.
 
 Concepts used by Katharsis
@@ -20,11 +20,11 @@ Concepts used by Katharsis
 
 Resource
   A ``Resource`` is a collection of attributes that users are interested in. A resource must have a unique ``type`` and ``id``.
-  Katharsis use ``JsonApiResource`` annotation to mark classes as resources.
+  Katharsis uses the ``JsonApiResource`` annotation to mark classes as resources.
 
 Repository
   A ``Repository`` is a class that implements the `repository pattern`_ . We use this class to access and manipulate ``Resource``'s
-  In Katahrsis we mark a class as being a repository by using an annotated or implement an interface.
+  In Katharsis we mark a class as being a repository by annotating it as such or by implementing an interface.
   There are resource repositories and resource relationship repositories.
   The first handles resources and the second handles relationships between two resources.
 
@@ -32,7 +32,7 @@ Repository
 How does Katharsis work?
 ------------------------
 
-When is starts, the library performs a ``bootstrap`` phase and then enters ``running`` phase.
+When is starts, the library performs a ``bootstrap`` phase and then enters the ``running`` phase.
 
 During ``bootstrap``, the library discovers resources and repositories and builds up a registry.
 It then takes the information in the ``resource registry`` and  creates instances of the repositories.
@@ -41,20 +41,20 @@ Finally, it uses uses all these to construct a ``request dispatcher``.
 
 The ``request dispatcher`` is used in the ``running`` phase to process requests and send response in `json api`_ format.
 
-Tasks performed during ``bootstrap``
+Tasks performed during ``bootstrap`` phase
 
 * resource discovery
 * repository creation
 * dispatcher creation
 
-Tasks performed during ``running``
+Tasks performed during ``running`` phase
 
 * request processing
 * resource deserialization (when reading requests)
 * resource serialization (when sending responses)
 
 .. note::
-  All these steps are defined in Java interfaces so you can customise each one of them.
+  All these steps are defined in Java interfaces for easy customisation.
 
 
 Katharsis bootstrap
@@ -166,9 +166,9 @@ Once we have created the repositories we can create the ``request dispatcher`` .
 Request dispatcher creation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The request dispatcher is the main integration point between Katharsis and any other web frameworks.
+The request dispatcher is the main integration point between Katharsis and other web frameworks.
 
-It has a single method ``handle`` thar receives the Request and builds up a ``ResponseContext``.
+It has a single method ``handle`` that receives the Request and builds up a ``ResponseContext``.
 
 .. code-block:: java
 
@@ -193,23 +193,23 @@ Request processing
 ~~~~~~~~~~~~~~~~~~
 
 Once Katharsis is up and running it will receive and process requests.
-The API is pretty simple and requries you to build a ``Request`` object that contains all the information needed.
+The API is pretty simple and requires you to build a ``Request`` object that contains all the information needed.
 
-This step is handled by katharsis integrations with frameworks like Spring or JAX-RS or Vertx so most of the time you don't need to do anything.
+This step is handled by katharsis integrations with frameworks like Spring, JAX-RS, or Vertx, so most of the time you don't need to do anything.
 
 The library does the following steps:
 
-* validates the request - it checks to see if we have the resource in the registry and can handle the request
-* it finds a proper ``JsonApiHandler`` (based on the HTTP method and request path) and delegates request processing to it
-* sends the response (to be serialized as JSON)
+* Validates the request - it checks to see if we have the resource in the registry and can handle the request.
+* Finds a proper ``JsonApiHandler`` (based on the HTTP method and request path) and delegates request processing to it.
+* Sends the response (to be serialized as JSON).
 
 Each ``JsonApiHandler`` implements a specific part of `json api`_ specification, either from `Fetching data` or from `Creating, Updating and Deleting`.
 
-The handler in turn, perfomes the following:
+The handler in turn, performs the following:
 
-* finds the resource repository or relationship repository
-* invokes the repository method and returns the result
-* optionally, depending on what is returned, it may call other repository methods to perform relationship inclusion or fill Meta Information or Links Information
+* Finds the resource repository or relationship repository.
+* Invokes the repository method and returns the result.
+* Depending on what is returned, it may call other repository methods to perform relationship inclusion or fill Meta Information or Links Information.
 
 Resource serialization and deserialization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,7 +218,7 @@ These tasks require us to transform a resource (``ResponseContext``) to a json d
 We also need to be able to perform the reverse operation, from a json request body to resource.
 
 We use currently use ``Jackson`` as a serialization framework. We build a Jackson module using ``JsonApiModuleBuilder``.
-If you need to change anything about how json is serializaed or deserialzied you can look in this class.
+If you need to change anything about how json is serialized or deserialized you can look in this class.
 
 We always serialize an instance of ``JsonApiDocument``. Repositories however can respond with basic resources.
 In that case the ``JsonApiDocument`` is built by the library by wrapping the response.
@@ -232,13 +232,13 @@ There are two strategies that we consider:
 
 #. Repositories return instances of Resources
 
-  In this case we wrap the return object (instance of class annotated with ``@JsonApiResource`` ) in a ``@JsonApiDocument``.
-  The library code also takes care of calling the methdos for ``included`` resources.
+   In this case we wrap the return object (instance of class annotated with ``@JsonApiResource`` ) in a ``@JsonApiDocument``.
+   The library code also takes care of calling the methods for ``included`` resources.
 
 #. Repositories return instance of ``JsonApiDocument``
 
-  This requires users to do more work but is more efficient and can provide a much better controll over response.
-  You can customise almost all of the response, including: meta information, links, included relationships, etc.
+   This requires users to do more work but is more efficient and can provide a much better control over the response.
+   You can customize almost every aspect of the response (meta information, links, included relationships, etc.)
 
 
 .. _`json api`: http://jsonapi.org/

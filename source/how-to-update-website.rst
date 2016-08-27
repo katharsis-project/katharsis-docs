@@ -19,4 +19,4 @@ Currently the website is an Angular application.
 How to deploy changes
 ---------------------
 
-If you are a team member, you can deploy a new version oof the website.
+If you are a team member, you can deploy a new version of the website.
