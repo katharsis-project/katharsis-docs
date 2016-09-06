@@ -17,65 +17,74 @@ Below are listed dependencies used in Katharsis that project has to meet to be c
 
 .. code-block:: bash
 
-  [INFO] io.katharsis:katharsis-core:jar:2.3.0
-  [INFO] +- org.reflections:reflections:jar:0.9.9:compile
-  [INFO] |  +- com.google.guava:guava:jar:15.0:compile
-  [INFO] |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  [INFO] |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  [INFO] +- net.jodah:typetools:jar:0.4.0:compile
-  [INFO] +- org.slf4j:slf4j-api:jar:1.7.12:compile
-  [INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  [INFO] |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  [INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
+  io.katharsis:katharsis-core:bundle:2.6.0
+  +- org.reflections:reflections:jar:0.9.9:compile
+  |  +- com.google.guava:guava:jar:15.0:compile
+  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
+  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
+  +- net.jodah:typetools:jar:0.4.4:compile
+  +- org.slf4j:slf4j-api:jar:1.7.13:compile
+  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
+  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
+  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
 
 
-``Katharsis-rs``
+``katharsis-rs``
 
 .. code-block:: bash
 
-  [INFO] io.katharsis:katharsis-rs:jar:2.3.0
-  [INFO] +- io.katharsis:katharsis-core:jar:2.3.0:compile
-  [INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-  [INFO] +- javax.ws.rs:javax.ws.rs-api:jar:2.0.1:compile
-  [INFO] \- javax.servlet:javax.servlet-api:jar:3.0.1:compile
+  io.katharsis:katharsis-rs:bundle:2.6.0
+  +- io.katharsis:katharsis-core:jar:2.6.0:compile
+  |  +- net.jodah:typetools:jar:0.4.4:compile
+  |  +- org.slf4j:slf4j-api:jar:1.7.13:compile
+  |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
+  |     \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
+  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
+  +- org.reflections:reflections:jar:0.9.9:compile
+  |  +- com.google.guava:guava:jar:15.0:compile
+  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
+  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
+  +- javax.ws.rs:javax.ws.rs-api:jar:2.0.1:compile
+  +- javax.servlet:javax.servlet-api:jar:3.0.1:compile
 
 
 ``katharsis-servlet``
 
 .. code-block:: bash
 
-  [INFO] io.katharsis:katharsis-servlet:jar:2.3.0
-  [INFO] +- io.katharsis:katharsis-core:jar:2.3.0:compile
-  [INFO] |  +- org.reflections:reflections:jar:0.9.9:compile
-  [INFO] |  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  [INFO] |  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  [INFO] |  +- net.jodah:typetools:jar:0.4.0:compile
-  [INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  [INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  [INFO] |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-  [INFO] +- com.google.guava:guava:jar:15.0:compile
-  [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
-  [INFO] +- org.slf4j:slf4j-api:jar:1.7.6:provided
+  io.katharsis:katharsis-servlet:bundle:2.6.0
+  +- io.katharsis:katharsis-core:jar:2.6.0:compile
+  |  +- net.jodah:typetools:jar:0.4.4:compile
+  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
+  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
+  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
+  +- org.reflections:reflections:jar:0.9.9:compile
+  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
+  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
+  +- com.google.guava:guava:jar:15.0:compile
+  +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
+  +- org.slf4j:slf4j-api:jar:1.7.6:provided
 
 
 ``katharsis-spring``
 
 .. code-block:: bash
 
-  [INFO] io.katharsis:katharsis-spring:jar:2.3.0
-  [INFO] +- org.springframework.boot:spring-boot-starter-web:jar:1.2.7.RELEASE:compile
-  [INFO] |  +- org.springframework.boot:spring-boot-starter:jar:1.2.7.RELEASE:compile
-  ...
-  [INFO] +- org.springframework.boot:spring-boot-configuration-processor:jar:1.2.7.RELEASE:compile
-  [INFO] |  \- org.json:json:jar:20140107:compile
-  [INFO] +- io.katharsis:katharsis-servlet:jar:2.3.0:compile
-  [INFO] |  +- io.katharsis:katharsis-core:jar:2.3.0:compile
-  [INFO] |  |  +- org.reflections:reflections:jar:0.9.9:compile
-  [INFO] |  |  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  [INFO] |  |  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  [INFO] |  |  +- net.jodah:typetools:jar:0.4.0:compile
-  [INFO] |  |  \- org.slf4j:slf4j-api:jar:1.7.12:compile
-  [INFO] |  \- com.google.guava:guava:jar:15.0:compile
+  io.katharsis:katharsis-spring:bundle:2.6.0
+  +- org.springframework.boot:spring-boot-starter-web:jar:1.3.1.RELEASE:compile
+  |  ...
+  +- org.springframework.boot:spring-boot-configuration-processor:jar:1.3.1.RELEASE:compile
+  |  +- org.json:json:jar:20140107:compile
+  |  \- org.springframework:spring-core:jar:4.2.4.RELEASE:compile
+  |     \- commons-logging:commons-logging:jar:1.2:compile
+  +- io.katharsis:katharsis-servlet:jar:2.6.0:compile
+  |  +- io.katharsis:katharsis-core:jar:2.6.0:compile
+  |  |  +- net.jodah:typetools:jar:0.4.4:compile
+  |  |  \- org.slf4j:slf4j-api:jar:1.7.13:compile
+  |  \- com.google.guava:guava:jar:15.0:compile
+  +- org.reflections:reflections:jar:0.9.9:compile
+  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
+  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
 
 
 ``katharsis-vertx``
@@ -100,6 +109,23 @@ Below are listed dependencies used in Katharsis that project has to meet to be c
   |    \--- com.google.code.findbugs:annotations:2.0.1
   \--- org.slf4j:slf4j-api:1.7.13
 
+  ``katharsis-client``
+
+  .. code-block:: bash
+
+  io.katharsis:katharsis-client:bundle:2.6.0
+  +- io.katharsis:katharsis-core:jar:2.6.0:compile
+  |  +- net.jodah:typetools:jar:0.4.4:compile
+  |  +- org.slf4j:slf4j-api:jar:1.7.13:compile
+  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
+  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
+  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
+  +- org.reflections:reflections:jar:0.9.9:compile
+  |  +- com.google.guava:guava:jar:15.0:compile
+  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
+  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
+  +- com.squareup.okhttp:okhttp:jar:2.7.5:compile
+  |  \- com.squareup.okio:okio:jar:1.6.0:compile
 
 Supported requests
 ------------------
@@ -460,7 +486,7 @@ Examples:
 
 * ``GET /tasks/?filter[tasks][name]=Super task``
 * ``GET /tasks/?filter[tasks][name]=Super task&[tasks][dueDate]=2015-10-01``
-* ``GET /tasks/?filter[tasks][name][$startWith]=Super task``
+* ``GET /tasks/?filter[tasks][name][EQ]=Super task``
 * ``GET /tasks/?filter[tasks][name][][$startWith]=Super&[tasks][name][][$endWith]=task``
 
 Sorting
@@ -908,7 +934,7 @@ Katharsis provides ``Handler`` that intercepts requests and delegates them to Ka
   }
 
 
-Simple useage example that creates the handler:
+Simple usage example that creates the handler:
 
 .. code-block:: java
 
@@ -925,5 +951,34 @@ Advanced usage that shows how you can inject custom paramters in Katharsis repos
   Json.mapper, new CustomParameterProviderFactory(Json.mapper, context));
   router.route("/api/*").handler(katharsisGlue);
 
+
+Client
+-----------------
+
+Since v2.6.0 there is a new Katharsis client support for Java projects to allow
+communicating with JSON-API compliant servers. `OkHttp <http://square.github.io/okhttp>`_
+library has been used to allow usage in both Android and server applications and services.
+
+.. note::
+  This functionality should be considered experimental and used on your own risk.
+
+The client requires to define resources in the same manner as defined in the `Models`_ section.
+To start using the client just create an instance of ``KatharsisClient`` and pass the service
+URL and the location to the package where the models are defined.
+
+The client has two methods:
+
+* ``KatharsisClient#getRepository(Class)`` to build a resource repository
+* ``KatharsisClient#getRepository(Class, Class)`` to build a relationship repository
+
+The interface of the repositories is as same as defined in `Repositories`_ section.
+
+An example of the usage:
+
+.. code-block:: java
+
+  KatharsisClient client = new KatharsisClient("http://localhost:8080/api", "models");
+  ResourceRepositoryStub<Task, Long> taskRepo = client.getRepository(Task.class);
+  List<Task> tasks = taskRepo.findAll(new QueryParams());
 
 Enjoy.
