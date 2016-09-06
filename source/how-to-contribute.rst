@@ -13,12 +13,12 @@ You'll find all of them on our `Katharsis Github`_ project.
 I think Katharsis should do X?
 ------------------------------
 
-If you have an idea for a new feature that Katharsis should support it is a good idea to start a discussion about it.
-You can start discussions on `Katharsis Gitter`_ or create a new issue on `Katharsis Github`_ .
+If you have an idea for a new feature that Katharsis should support, it is a good idea to start a discussion about it
+on `Katharsis Gitter`_ or create a new issue on `Katharsis Github`_ .
 
-If you also have code for the feature, definitly submit an issue and a pull request.
+If you also have code for the feature, definitely submit an issue and a pull request.
 
-Please note that it might take some time for us to answer since we are all volunteers.
+Please note that it might take some time for us to answer, since we are all volunteers.
 
 
 How development happens
@@ -34,9 +34,9 @@ We use ``development`` branch to gather new features until they are mature enoug
 As described in `git flow`_ new features are developed in features branches.
 Once a feature is complete it should get merged in ``development`` via a ``pull request`` and ``code review``.
 
-In time, features gatter and we can decide to make a new release.
-After a ``feature freaze`` period when only bug-fixes are allowed, we can release the new version of the project.
-We do this by tagging the last commit on ``development``, building binaries, publishin artifacts to Maven Central and
+In time, features gather and we can decide to make a new release.
+After a ``feature freeze`` period when only bug-fixes are allowed, we can release the new version of the project.
+We do this by tagging the last commit on ``development``, building binaries, publishing artifacts to Maven Central and
 merging development into master to prepare for the next development cycle.
 
 We use ``2.x.y`` style branches to keep maintenance versions. These version will not receive new features and are
