@@ -466,12 +466,79 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
   #. The method has to return an Iterable with resources.
 
 
+
 Query parameters
 ----------------
 
-
 Katharsis has defined set of query parameters which can be used by the framework during data retrieval and by a developer to perform other operations.
-All of the types of parameters can be accessed using ``QueryParams`` object in repository methods.
+All of the types of parameters can be accessed with the either ``QueryParams`` or ``QuerySpec`` object in repository methods.
+
+
+QuerySpec vs. QueryParams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``QueryParams`` is the traditional query api of Katharsis. ``QuerySpec`` is a new API 
+with the purpose of simplifying the implementation of repositories and offering 100% JSON API compliance.
+
+``QuerySpec`` is a drop-in replacement for ``QueryParams`` in annotated repositories.
+And there are interfaces named ``QuerySpecResourceRepository``,  ``QuerySpecRelationshipRepository``,
+``QuerySpecMetaRepository`` and ``QuerySpecLinksRepository`` that match the functionality 
+of the traditional interfaces ``ResourceRepository``, ``RelationshipRepository``, etc.
+
+For the time being, both ``QueryParams`` and ``QuerySpec`` are fully supported. It is also possible
+to mix the use of both classes to gradually move from ``QueryParams`` to ``QuerySpec``. The next section
+outlines the necessary changes in the setup procedure to gain JSON API compliance.
+
+
+JSON API compliance
+~~~~~~~~~~~~~~~~~~~~
+
+The subsequent sections outline URL conventions to query resources.
+``QueryParams`` does not fully adhere to the JSON API specification and instead
+provides a number of improvements over the specification. ``QuerySpec`` strives to offer both,
+JSON API compliance and some more advanced URL patterns.
+
+Most notably, ``QuerySpec`` supports the ordered sorting on multiple attributes 
+by providing an ordered list of those sorted attributes. And ``QueryParams`` 
+introduced support to not only sort and filter requested resources, but also included related resources.
+Because of this, sort and filter parameters require an additional type passed in the parameter name.
+With ``QuerySpec`` this type becomes optional and the requested (root) type is used by default. The
+following two requests are equivalent:
+
+``GET /tasks/?sort[tasks]=!shortName,name``
+
+and more simply just:
+
+``GET /tasks/?sort=-shortName,name``
+
+In order to enable the JSON API compliant URL handling, a ``QuerySpecDeserializer`` instead of ``QueryParamsBuilder``
+has to be provided when setting up Katharsis (see the corresponding documentation for the
+various technology stacks). Typically the default implementation ``DefaultQuerySpecDeserializer``
+is perfectly fine. In JAX-RS it looks like:
+
+.. code-block:: java
+
+	public class MyKatharsisFeature implements Feature {
+	
+		...
+			
+		@Override
+		public boolean configure(FeatureContext featureContext) {
+			DefaultQuerySpecDeserializer querySpecDeserializer = new DefaultQuerySpecDeserializer();
+			KatharsisFeature feature = new KatharsisFeature(new ObjectMapper(), querySpecDeserializer, serviceLocator);
+			featureContext.register(feature);
+			return true;
+		}
+	}
+
+``DefaultQuerySpecDeserializer`` further provides some customization options like setting a default page size
+if no paging parameters are provided by user. This is highly recommended for larger repositories to prevent
+accidental full downloads of the repository.
+
+.. code-block:: java
+
+	querySpecDeserializer.setDefaultLimit(20L);
+
 
 
 Filtering
@@ -486,22 +553,28 @@ Examples:
 * ``GET /tasks/?filter[tasks][name]=Super task&[tasks][dueDate]=2015-10-01``
 * ``GET /tasks/?filter[tasks][name][EQ]=Super task``
 * ``GET /tasks/?filter[tasks][name][][$startWith]=Super&[tasks][name][][$endWith]=task``
+* ``GET /tasks/?filter[name]=Super task`` (``QuerySpec`` example without type and default EQ operator)
+* ``GET /tasks/?filter[name][EQ]=Super task`` (``QuerySpec`` example with operator)
+
+``QuerySpec`` uses the ``EQ`` operator if not operator was provided. Custom operators can be registered
+with ``DefaultQuerySpecDeserializer.addSupportedOperator(..)``. The default operator can be 
+set with ``DefaultéQuerySpecDeserializer.setDefaultOperator(...)``.
+
+
 
 Sorting
 ~~~~~~~
 
-
-.. note::
-
-  Katharsis implementation differs from JSON API definition of sorting in order to fit standard query parameter serializing strategy and maximize effective processing of data.
-
 Sorting information for the resources can be achieved by providing ``sort`` parameter.
-The format for sorting: ``sort[ResourceType][property|operator]([property|operator])* = "value"``
+The QueryParams format for sorting: ``sort[ResourceType][property|operator]([property|operator])* = "value"``.
+QuerySpec uses the standard JSON API format.
 
 Examples:
 
-* ``GET /tasks/?sort[tasks][name]=asc``
-* ``GET /tasks/?sort[projects][shortName]=desc&sort[users][name][firstName]=asc``
+* ``GET /tasks/?sort[tasks][name]=asc`` (``QueryParams`` example)
+* ``GET /tasks/?sort[projects][shortName]=desc&sort[users][name][firstName]=asc`` (``QueryParams`` example)
+* ``GET /tasks/?sort=name,-shortName`` (``QuerySpec`` example without type)
+* ``GET /tasks/?sort[projects]=name,-shortName`` (``QuerySpec`` example with type)
 
 
 Grouping
@@ -546,16 +619,11 @@ Examples:
 * ``GET /tasks/?fields[tasks]=name``
 * ``GET /tasks/?fields[tasks][]=name&fields[tasks][]=dueDate``
 * ``GET /tasks/?fields[users]=name.surname&include[tasks]=author``
+* ``GET /tasks/?fields=name`` (``QuerySpec`` example without type)
 
 
 Inclusion of Related Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-  Katharsis implementation differs form JSON API definition of sparse field set in
-  order to fit standard query parameter serializing strategy and maximize effective processing of data.
-
 
 Information about relationships to include in the response can be achieved by providing ``include`` parameter.
 The format for fields: ``include[ResourceType] = "property(.property)*"``
@@ -567,6 +635,111 @@ Examples:
 * ``GET /tasks/?include[tasks]=author``
 * ``GET /tasks/?include[tasks][]=author&include[tasks][]=comments``
 * ``GET /tasks/?include[projects]=task&include[tasks]=comments``
+* ``GET /tasks/?include[projects]=task&include=comments`` (``QuerySpec`` example)
+
+
+
+QuerySpec API
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The use of ``QuerySpec`` simplifies the implementation of repositories with a slightly different API compared
+to ``QueryParams``. ``QueryParams`` holds parameters for all requested resource types (root and included relations)
+simultaneously. A ``QuerySpec`` holds only the the parameters for a single resource type. A repository
+is invoked with the ``QuerySpec`` for the requested root type. Because of this, it gives
+direct access to sorting, filtering, pagination and inclusion parameters for the requested
+root resource. If related resources are included in the request, their ``QuerySpec``s 
+can be obtained by calling ``QuerySpec.getRelatedSpec(Class)`` on the root ``QuerySpec``. Next to that,
+``QuerySpec`` simplifies filter handling with a new filter API based on ``FilterSpec`` that should be a 
+good match for most use cases. Compared to ``QueryParams`` it takes care of distinguishing attributes 
+from operators in a String like ``tasks[title][EQ]=myTitle`` and marshals parameter values from Strings 
+to the corresponding attribute type.  
+
+The new API looks like (further setters available as well):
+
+.. code-block:: java
+
+	public class QuerySpec {
+		public <T> List<T> apply(Iterable<T> resources){...}
+	
+		public Long getLimit() {...}
+	
+		public long getOffset() {...}
+	
+		public List<FilterSpec> getFilters() {...}
+	
+		public List<SortSpec> getSort() {...}
+	
+		public List<IncludeFieldSpec> getIncludedFields() {...}
+	
+		public List<IncludeRelationSpec> getIncludedRelations() {...}
+	
+		public QuerySpec getQuerySpec(Class<?> resourceClass) {...}
+		
+		...	
+	}
+
+
+``QuerySpec`` provides a method ``apply`` that allows sorting, filtering and paging
+in-memory on any ``java.util.List``. It is useful for testing and on smaller datasets to keep
+the implementation of a repository as simple as possible. ``apply`` returns a ``PagedResultList``
+that further let Katharsis automatically compute pagination links.
+
+A ``QuerySpec`` is also easy to instantiate and modify, which makes it very well suited to
+work together with ``katharsis-client``.
+
+The implementation of a repository is further facilitated with ``QuerySpecResourceRepositoryBase``
+and ``QuerySpecRelationshipRepositoryBase``. Those two classes provide most of the implementation
+necessary to implement a repository. A resources repository can then look as simple as:
+
+.. code-block:: java
+
+	public class ProjectRepository extends QuerySpecResourceRepositoryBase<Project, Long> {
+	
+		private static Set<Project> projects = new HashSet<>();
+	
+		public ProjectRepository() {
+			super(Project.class);
+		}
+	
+		@Override
+		public Iterable<Project> findAll(QuerySpec querySpec) {
+			return querySpec.apply(projects);
+		}
+	
+		@Override
+		public <S extends Project> S save(S entity) {
+			delete(entity.getId()); // replace current one
+			projects.add(entity);
+			return entity;
+		}
+	
+		@Override
+		public void delete(Long id) {
+			Iterator<Project> iterator = projects.iterator();
+			while (iterator.hasNext()) {
+				Project next = iterator.next();
+				if (next.getId().equals(id)) {
+					iterator.remove();
+				}
+			}
+		}
+	}
+
+
+And a relationship repository looks like:
+
+.. code-block:: java
+
+	public class ProjectToTaskRelationshipRepository extends QuerySpecRelationshipRepositoryBase<Project, Long, Task, Long> {
+	
+		public ProjectToTaskRelationshipRepository() {
+			super(Project.class, Task.class);
+		}
+	}
+
+The relationship repository make use QuerySpec, reflection and the resource repositories on both sides of the relation to
+implement its functionality! Note that further improvements in this area are expected in the near future.
+
 
 
 Error Handling
@@ -641,7 +814,11 @@ Exception mapper classes will be scanned for and registered during application s
 They should be located in your resource search package.
 
 An exception should be mapped to an ErrorResponse object.
-It consists of an HTTP status and ErrorData (which is consistent with JSON API error structure)
+It consists of an HTTP status and ErrorData (which is consistent with JSON API error structure).
+
+Note that the exception mapper is reponsible for providing the logging of exceptions with the
+appropriate log levels. Also have a look at the subsequent section about the validation module that takes
+care of JSR-303 bean validation exception mapping. 
 
 
 Meta Information
@@ -664,6 +841,10 @@ If you want to add meta information along with the responses, all repositories (
 
 When using annotated versions of repositories, a method that returns a ``LinksInformation`` object should be annotated with ``JsonApiLinks`` and the first parameter of the method has to be a list of resources.
 
+Pagination links are mandatory when pagination parameters are applied. Katharsis can take care of the computation of those links.
+For this a repository can return a ``PagedResultList`` whild holds a total unpaged but filtered count of resources next to the actual
+pages resources. Note that the feature is currently only supported when Katharsis is setup to use QuerySpec (more support to follow upon request). 
+
 
 JAX-RS integration
 ------------------
@@ -674,6 +855,10 @@ There are several steps required to integrate Katharsis into a JAX-RS applicatio
 
 Instantiation of a JsonServiceLocator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+  This step can be omitted when using the CDI integration explained further below.
+
 
 Katharsis require an instance of every resources repository it finds. To provide them, ``JsonServiceLocator`` interface has to be implemented. There's a few examples on how to do that with:
 
@@ -686,6 +871,7 @@ Instantiation of a KatharsisFeature
 
 Created instance of ``JsonServiceLocator`` has to be provided to new instance of ``KatharsisFeature`` along with Jackson Databind ObjectMapper.
 
+
 Providing a configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -697,11 +883,14 @@ All of them are defined in KatharsisProperties class:
   It allows configuring from which package should be searched to get models, repositories used by the core and exception mappers used to map thrown from repositories exceptions.
 
   Multiple packages can be passed by specifying a comma separated string of packages i.e. com.company.service.dto,com.company.service.repository.
+  
+  Not necessary when the CDI integration is in use.
 
 * ``katharsis.config.core.resource.domain``
 
   Domain name as well as protocol and optionally port number used when building links objects in responses i.e. http://katharsis.io.
-  The value must not end with ``/``.
+  The value must not end with ``/``. If the property is omitted, then they are extracted from the incoming request, which should work
+  well for most use cases.
 
 * ``katharsis.config.web.path.prefix`` (Optional)
 
@@ -715,7 +904,52 @@ All of them are defined in KatharsisProperties class:
 Registration of a KatharsisFeature
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Instantiated ``KatharsisFeature`` has to be registered as a JAX-RS feature.
+Instantiated ``KatharsisFeature`` has to be registered as a JAX-RS feature. 
+
+
+Example of a KatharsisFeature without CDI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``KatharsisFeature`` has a number of  constructors and methods that allow to
+customize its behavior. A more advanced setup may look like:
+
+.. code-block:: java
+
+	public class MyAdvancedKatharsisFeature implements Feature {
+	
+		@Inject
+		private EntityManager em;
+	
+		@Inject
+		private EntityManagerFactory emFactory;
+	
+		...
+			
+		@Override
+		public boolean configure(FeatureContext featureContext) {
+			featureContext.property(KatharsisProperties.RESOURCE_SEARCH_PACKAGE, ...);
+			featureContext.property(KatharsisProperties.WEB_PATH_PREFIX, ...);
+	
+			// also map entities to JSON API resources (see further below)
+			JpaModule jpaModule = new JpaModule(emFactory, em, transactionRunner);
+			jpaModule.setRepositoryFactory(new ValidatedJpaRepositoryFactory());
+	
+			// JSON API compliant URL handling with QuerySpec
+			DefaultQuerySpecDeserializer querySpecDeserializer = new DefaultQuerySpecDeserializer();
+			
+			// limit all incoming requests to 20 resources if not specified otherwise
+			querySpecDeserializer.setDefaultLimit(20L);
+			
+			ServiceLocator serviceLocator = ...
+			KatharsisFeature feature = new KatharsisFeature(new ObjectMapper(), querySpecDeserializer, serviceLocator);
+			feature.addModule(jpaModule);
+	
+			featureContext.register(feature);
+			return true;
+		}
+	}
+
+
 
 Repository supported parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -913,10 +1147,21 @@ An example ``application.properties`` file is presented below.
 
 Spring integration uses katharsis-servlet ``AbstractKatharsisFilter`` to fetch the requests.
 
+
 Repository supported parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spring integration allows a developer to pass all of the types supported by Spring which don't operate on the response.
+
+
+CDI integration
+------------------
+
+Both the JAX-RS and Servlet integration have optional support for CDI. To enable CDI support, 
+add ``io.katharsis:katharsis-cdi`` to your classpath. Katharsis will then pickup the ``CdiServiceDiscovery`` implementation
+and use it to discover its modules and repositories. In such a setup, the
+``katharsis.config.core.resource.package`` parameter is not necessary any more. A similar integration 
+into Spring will be added in the near future.
 
 
 Vertx integration
@@ -963,10 +1208,12 @@ The client requires to define resources in the same manner as defined in the `Mo
 To start using the client just create an instance of ``KatharsisClient`` and pass the service
 URL and the location to the package where the models are defined.
 
-The client has two methods:
+The client has four methods:
 
 * ``KatharsisClient#getRepository(Class)`` to build a resource repository
 * ``KatharsisClient#getRepository(Class, Class)`` to build a relationship repository
+* ``KatharsisClient#getQuerySpecRepository(Class)`` to build a QuerySpec-based resource repository
+* ``KatharsisClient#getQuerySpecRepository(Class, Class)`` to build a QuerySpec-based relationship repository
 
 The interface of the repositories is as same as defined in `Repositories`_ section.
 
@@ -974,8 +1221,240 @@ An example of the usage:
 
 .. code-block:: java
 
-  KatharsisClient client = new KatharsisClient("http://localhost:8080/api", "models");
+  KatharsisClient client = new KatharsisClient("http://localhost:8080/api");
   ResourceRepositoryStub<Task, Long> taskRepo = client.getRepository(Task.class);
   List<Task> tasks = taskRepo.findAll(new QueryParams());
 
+Have a look at, for example, the QuerySpecClientTest to see more examples of how it is used.
+
+There are still a variety of open improvements to be added in the future (help always welcomed):
+
+- asynchronous request support.
+- support for typed links and meta information (currently there is raw JSON access only).
+- proxies/lazy-loading of related resources.
+- integration of other HTTP client libraries.
+
 Enjoy.
+
+
+Modules
+-----------------
+
+Katharsis has a module API that allows to extend the core functionality by third-party contributions.
+The mentioned JPA module in the next section is an example for that. The API is similar in spirit
+to the one of the ``https://github.com/FasterXML/jackson``. The main interface is ``Module`` with
+a default implementation provided by ``SimpleModule``. A module has access to a ``ModuleContext``
+that allows to register all kinds of extensions like new ``ResourceInformationBuilder``,
+``ResourceLookup``, ``Filter``, ``ExceptionMapper`` and Jackson modules. It also gives access to the
+``ResourceRegistry`` holding information about all the repositories registered to katharsis.
+The ``JpaModule`` in ``katharsis-jpa`` provides a good, more advanced example of using the
+module API.
+
+
+
+Request Filtering
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``Filter`` interface provided by Katharsis allows to intercept incoming requests and do 
+any kind of validation, changes, monitoring, transaction handling, etc. ``Filter`` can be 
+hooked into Katharsis by setting up a module and registering the filter to the 
+``ModuleContext``.
+
+
+
+JPA Module
+-------------
+
+The JPA module allows to automatically expose JPA entities as JSON API repositories. No implementation
+or Katharsis-specific annotations are necessary.
+
+The feature set includes:
+
+- expose JPA entities to JSON API endpoints
+- expose JPA relations as JSON API endpoints
+- decide which entities to expose as endpoints
+- sorting, filtering, paging, inclusion of related resources
+- JPA filter API to modify the issued queries
+- JPA Criteria API and QueryDSL support
+- DTO mapping support
+- support for computed attributes behaving like regular, persisted attributes.
+
+
+JPA Setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use the module, add a dependency to ``io.katharsis:katharsis-jpa`` and register the ``JpaModule`` 
+to Katharsis. For example in the case of JAX-RS:
+
+.. code-block:: java
+
+	TransactionRunner transactionRunner = ...;
+	JpaModule jpaModule = JpaModule.newServerModule(entityManagerFactory, entityManager, transactionRunner);
+	jpaModule.setRepositoryFactory(new ValidatedJpaRepositoryFactory());
+	
+	KatharsisFeature feature = new KatharsisFeature(...);
+	feature.addModule(jpaModule);
+			
+
+The JPA modules by default looks up the entityManagerFactory and obtains a list
+of registered JPA entities. For each entity a instance of ``JpaEntityRepository``
+is registered to Katharsis using the module API. Accordingly, every relation
+is registered as ``JpaRelationshipRepository``. ``JpaModule.setRepositoryFactory``
+allows to provide a factory to change or customized the used repositories.
+To manually select the entities exposed to Katharsis use ``JpaModule.addEntityClass(...)`` 
+and ``JpaModule.removeEntityClass(...)``. If no ``entityManagerFactory`` is provided
+to newServerModule, then the registartion of entities is omitted and can be done
+manually.
+	
+The transactionRunner needs to be implemented by the application to hook into the
+transaction processing of the used environment (Spring, JEE, etc.). This might be
+as simple as a Spring bean implementing ``TransactionRunner`` and adding a 
+``@Transactional`` annotation. The JPA module makes sure that every call to a 
+repository happens within such a transaction boundary.
+
+To setup a Katharsis client with the JPA module use:
+
+
+.. code-block:: java
+
+	client = new KatharsisClient(getBaseUri().toString(), ...);
+
+	JpaModule module = JpaModule.newClientModule(TestEntity.class.getPackage().getName());
+	setupModule(module, false);
+	client.addModule(module);
+	
+The JpaModule takes care of the lookup of the entities and registering them to Katharsis
+with the provided package passed to ``newClientModule``.	
+
+Have a look at https://github.com/katharsis-project/katharsis-framework/blob/develop/katharsis-jpa/src/test/java/io/katharsis/jpa/JpaQuerySpecEndToEndTest.java within the ``katharsis-jpa``
+test cases to see how everything is used together with ``katharsis-client``.
+The JPA modules further has a number of more advanced customization options that
+are discussed in the subsequent sections.
+
+
+Criteria API and QueryDSL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The JPA module can work with two different query APIs, the default Criteria API
+and QueryDSL. ``JpaModule.setQueryFactory`` allows
+to choose between those two implementation. There is the ``JpaCriteriaQueryFactory``
+and the ``QuerydslQueryFactory``. By default the Criteria API is used.
+QueryDSL sits on top of JPQL and has to advantage of being easier to use. 
+
+
+Customizing the JPA repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The setup page outlined the ``JpaRepositoryFactory`` that can be used to hook a custom JPA repository
+implementations into the JPA module. The JPA module further provides a more
+lightweight filter API to perform various changes to JPA repository requests:
+
+``JpaModule.addFilter(new MyRepositoryFilter())``
+
+A filter looks like:
+
+.. code-block:: java
+
+	public class MyRepositoryFilter extends JpaRepositoryFilterBase {
+
+		boolean accept(Class<?> resourceType){...}
+
+		<T, I extends Serializable> JpaEntityRepository<T, I> filterCreation(JpaEntityRepository<T, I> repository){...}
+	
+		QuerySpec filterQuerySpec(Object repository, QuerySpec querySpec){...}
+		
+		...
+	}
+
+
+The various filter methods allow a wide variety of customizations or also to replace the passed object in question.
+
+
+DTO Mapping
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mapping to DTO objects is supported with ``JpaModule.registerMappedEntityClass(...)``.
+A mapper then can be provided that translates the Entity to a DTO class.
+Such a mapper might be implemented manually or generated (mostly) automatically
+with tools like MapStruct. If two mapped entities are registered, there
+respective mapped relationships will be automatically registered as well. 
+
+The mechanism is not limited to simple mappings, but can also introduce computed 
+attributes like in the example depicted here:
+
+.. code-block:: java
+
+	JpaModule module = JpaModule.newServerModule(emFactory, em, transactionRunner);
+				module.setQueryFactory(QuerydslQueryFactory.newInstance());
+	QuerydslExpressionFactory<QTestEntity> basicComputedValueFactory = new QuerydslExpressionFactory<QTestEntity>() {
+
+		@Override
+		public Expression<String> getExpression(QTestEntity parent, JPAQuery<?> jpaQuery) {
+			return parent.stringValue.upper();
+		}
+	};
+
+	QuerydslQueryFactory queryFactory = (QuerydslQueryFactory) module.getQueryFactory();
+	queryFactory.registerComputedAttribute(TestEntity.class, TestDTO.ATTR_COMPUTED_UPPER_STRING_VALUE,
+		 String.class, basicComputedValueFactory);
+	module.addMappedEntityClass(TestEntity.class, TestDTO.class, new TestDTOMapper(entityManager));
+	
+and
+
+.. code-block:: java
+	
+	public class TestDTOMapper implements JpaMapper<TestEntity, TestDTO> {
+	
+		@Override
+		public TestDTO map(Tuple tuple) {
+			TestDTO dto = new TestDTO();
+			TestEntity entity = tuple.get(0, TestEntity.class);
+			dto.setId(entity.getId());
+			dto.setStringValue(entity.getStringValue());
+			dto.setComputedUpperStringValue(tuple.get("computedUpperStringValue", String.class));
+			...
+			return dto;
+		}
+		
+		...
+	
+	}
+
+Some of the regular entity attributes are mapped to the DTO. But there is also a 
+``computedUpperStringValue`` attribute that is computed with an expression.
+The expression can be written with the Criteria API or QueryDSL depending
+on which query backend is in use.
+
+Computed attributes are indistinguishable from regular, persisted entity attributes.
+They can be used for selection, sorting and filtering. Both ``JpaCriteriaQueryFactory`` 
+and ``QuerydslQueryFactory`` provide a ``registerComputedAttribute`` method to 
+register an expression factory to create such computed attributes. The registration requires 
+the target entity and a name. To make the computed attribute available
+to consumers, the mapper class has access to it trough the provided 
+tuple class. Have a look at https://github.com/katharsis-project/katharsis-framework/blob/develop/katharsis-jpa/src/test/java/io/katharsis/jpa/mapping/DtoMappingTest.java to see everything in use.
+
+There is currently not yet any support for renaming of attribute. If attributes
+are renamed on DTOs, the incoming QuerySpec has to be modified accordingly to
+match again the entity attribute naming.
+
+
+
+JSR 303 Validation Module
+-------------------------
+
+A ``ValidationModule`` provided by ``io.katharsis:katharsis-validation`` implements 
+exception mappers for 'javax.validation.ValidationException' and 'javax.validation.ConstraintViolationException'.
+Among others, it properly translates 'javax.validation.ConstraintViolation' instances to JSON API errors.
+A JSON API error can, among others, contain a source pointer. This source pointer allows a clients/UI to
+display the validation errors next to the corresponding input fields.
+
+
+Tracing with Zipkin/Brave
+-------------------------
+
+A ``BraveModule`` provided by ``io.katharsis:katharsis-brave`` provides integration into
+Zipkin/Brave to implement tracing for your repositories.
+
+
+
+
