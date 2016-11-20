@@ -1,9 +1,18 @@
 Meeting notes
 ==================================
 
-One of the main goal of the Katharsis Team is to support the community, that is not only provide support for submitted issues and answer questions on Gitter, but also conduct weekly meetings where everyone can participate and discuss about Katharsis development and activities to make Katharsis better!
+One of the main goal of the Katharsis Team is to support the community, that is not only provide support for submitted issues and answer questions on Gitter, 
+but also conduct bi-weekly meetings where everyone can participate and discuss about Katharsis development and activities to make Katharsis better!
 
 This page contains executive summary of each public meeting that had been held.
+
+
+Meeting notes - 18.11.2016
+------------------------------
+
+* Lot of features have been added. Focus for the next release is improving documentation and sonar.
+* katharsis-ui is next feature having top priority.
+
 
 Meeting notes - 08.09.2016
 ------------------------------
