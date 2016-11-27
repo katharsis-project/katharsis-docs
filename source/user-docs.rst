@@ -438,9 +438,6 @@ implementation can then look as simple as:
 	
 		public ProjectRepository() {
 			super(Project.class);
-			List<String> interests = new ArrayList<>();
-			interests.add("coding");
-			interests.add("art");
 			save(new Project(1L, "Project A"));
 			save(new Project(2L, "Project B"));
 			save(new Project(3L, "Project C"));
@@ -659,7 +656,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
   #. Iterable of relationships to be removed
   #. Relationship's field name
 
-* ``findOneTarget(T_ID, String, QueryParams) -> JsonApiFindOneTarget``
+* ``findOneTarget(T_ID, String, QuerySpec) -> JsonApiFindOneTarget``
 
   The requirements for the method parameters are as follows:
 
@@ -667,7 +664,7 @@ A list below defines a mapping of ``RelationshipRepository`` methods to annotati
   #. Relationship's field name
   #. The method has to return a resources.
 
-* ``findManyTargets(T_ID, String, QueryParams) -> JsonApiFindManyTargets``
+* ``findManyTargets(T_ID, String, QuerySpec) -> JsonApiFindManyTargets``
 
   The requirements for the method parameters are as follows:
 
@@ -687,6 +684,9 @@ All of the types of parameters can be accessed with the either QueryParams or Qu
 QuerySpec vs. QueryParams
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Note that if you are new to Katharsis and have setup your applications based on the
+examples, you can skip this section. Everything is already properly setup for you.
+
 QueryParams is the traditional query api of Katharsis. QuerySpec is a new API 
 with the purpose of simplifying the implementation of repositories and offering 100% JSON API compliance
 See the next section for more information about JSON API compliance.
@@ -695,13 +695,20 @@ QuerySpec is a drop-in replacement for QueryParams in annotated repositories.
 ``ResourceRepository`` and ``RelationshipRepository`` make use of QueryParams.
 ``ResourceRepositoryV2`` and ``RelationshipRepositoryV2`` make use of QuerySpec.
 
-For the time being, both QueryParams and QuerySpec are fully supported. It is also possible
-to mix the use of both classes to gradually move from QueryParams to QuerySpec. The next section
-outlines the necessary changes in the setup procedure to gain JSON API compliance.
+For the time being, both QueryParams and QuerySpec are fully supported. But
+QueryParams will be deprecated at some point and the use of QuerySpec is highly
+recommended. It is also possible to mix the use of both classes to gradually move
+from QueryParams to QuerySpec. Katharsis is able to internally 
+convert QueryParams to a QuerySpec. No changes necessary.
+
+The next section outlines the necessary changes in the setup procedure to gain JSON API compliance.
 
 
 JSON API compliance
 ~~~~~~~~~~~~~~~~~~~~
+
+Note that if you are new to Katharsis and have setup your applications based on the
+examples, you can skip this section. Everything is already properly setup for you.
 
 The subsequent sections outline URL conventions to query resources.
 QueryParams does not fully adhere to the JSON API specification and instead
@@ -765,7 +772,9 @@ Have a look at the examples. All of them are setup to use QuerySpec.
 	DefaultQuerySpecDeserializer validates all passed parameters against the domain model and fails
 	if one of the attributes is unknown. This flag allows to disable that check in case the should be necessary.
 
-
+Note that *QueryParams is not working with the new serializer*. This means repositories must be 
+migrated to QuerySpec first. This can happen gradually or in one step. Katharsis
+internally converts QueryParams to QuerySpec where necessary as long as the old serializer is in use.
 
 
 Filtering
