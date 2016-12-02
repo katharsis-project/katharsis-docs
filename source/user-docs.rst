@@ -788,14 +788,14 @@ QuerySpec examples:
 * ``GET /tasks/?filter[name]=Super task``
 * ``GET /tasks/?filter[name][EQ]=Super task``
 * ``GET /tasks/?filter[tasks][name]=Super task``
-* ``GET /tasks/?filter[tasks][name]=Super task&[tasks][dueDate]=2015-10-01``
+* ``GET /tasks/?filter[tasks][name]=Super task&filter[tasks][dueDate]=2015-10-01``
 
 QueryParams examples:
 
 * ``GET /tasks/?filter[tasks][name]=Super task``
-* ``GET /tasks/?filter[tasks][name]=Super task&[tasks][dueDate]=2015-10-01``
+* ``GET /tasks/?filter[tasks][name]=Super task&filter[tasks][dueDate]=2015-10-01``
 * ``GET /tasks/?filter[tasks][name][EQ]=Super task``
-* ``GET /tasks/?filter[tasks][name][][$startWith]=Super&[tasks][name][][$endWith]=task``
+* ``GET /tasks/?filter[tasks][name][][$startWith]=Super&filter[tasks][name][][$endWith]=task``
 
 QuerySpec uses the ``EQ`` operator if no operator was provided. Custom operators can be registered
 with ``DefaultQuerySpecDeserializer.addSupportedOperator(..)``. The default operator can be 
