@@ -31,12 +31,6 @@ Information about how to contribute is also available:
 
 .. _design-docs:
 
-.. toctree::
-  :maxdepth: 2
-  :caption: Design and architecture documentation
-
-  katharsis-design
-
 .. _contributor-docs:
 
 .. toctree::

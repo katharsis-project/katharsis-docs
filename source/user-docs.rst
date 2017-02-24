@@ -7,125 +7,10 @@ Katharsis provides means to easily expose resources over the REST interface. If 
 Requirements
 ------------
 
-Below are listed dependencies used in Katharsis that project has to meet to be compatible with latest library version:
-
-.. note::
-  Katharsis library requires minimum Java 7 to build and run.
+Katharsis library requires minimum Java 7 to build and run.
 
 
-``katharsis-core``
 
-.. code-block:: bash
-
-  io.katharsis:katharsis-core:bundle:2.6.0
-  +- org.reflections:reflections:jar:0.9.9:compile
-  |  +- com.google.guava:guava:jar:15.0:compile
-  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  +- net.jodah:typetools:jar:0.4.4:compile
-  +- org.slf4j:slf4j-api:jar:1.7.13:compile
-  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-
-
-``katharsis-rs``
-
-.. code-block:: bash
-
-  io.katharsis:katharsis-rs:bundle:2.6.0
-  +- io.katharsis:katharsis-core:jar:2.6.0:compile
-  |  +- net.jodah:typetools:jar:0.4.4:compile
-  |  +- org.slf4j:slf4j-api:jar:1.7.13:compile
-  |  \- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  |     \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-  +- org.reflections:reflections:jar:0.9.9:compile
-  |  +- com.google.guava:guava:jar:15.0:compile
-  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  +- javax.ws.rs:javax.ws.rs-api:jar:2.0.1:compile
-  +- javax.servlet:javax.servlet-api:jar:3.0.1:compile
-
-
-``katharsis-servlet``
-
-.. code-block:: bash
-
-  io.katharsis:katharsis-servlet:bundle:2.6.0
-  +- io.katharsis:katharsis-core:jar:2.6.0:compile
-  |  +- net.jodah:typetools:jar:0.4.4:compile
-  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-  +- org.reflections:reflections:jar:0.9.9:compile
-  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  +- com.google.guava:guava:jar:15.0:compile
-  +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
-  +- org.slf4j:slf4j-api:jar:1.7.6:provided
-
-
-``katharsis-spring``
-
-.. code-block:: bash
-
-  io.katharsis:katharsis-spring:bundle:2.6.0
-  +- org.springframework.boot:spring-boot-starter-web:jar:1.3.1.RELEASE:compile
-  |  ...
-  +- org.springframework.boot:spring-boot-configuration-processor:jar:1.3.1.RELEASE:compile
-  |  +- org.json:json:jar:20140107:compile
-  |  \- org.springframework:spring-core:jar:4.2.4.RELEASE:compile
-  |     \- commons-logging:commons-logging:jar:1.2:compile
-  +- io.katharsis:katharsis-servlet:jar:2.6.0:compile
-  |  +- io.katharsis:katharsis-core:jar:2.6.0:compile
-  |  |  +- net.jodah:typetools:jar:0.4.4:compile
-  |  |  \- org.slf4j:slf4j-api:jar:1.7.13:compile
-  |  \- com.google.guava:guava:jar:15.0:compile
-  +- org.reflections:reflections:jar:0.9.9:compile
-  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-
-
-``katharsis-vertx``
-
-.. code-block:: bash
-
-  +--- io.katharsis:katharsis-core:2.99.0-SNAPSHOT
-  |    +--- org.projectlombok:lombok:1.16.8
-  |    +--- net.jodah:typetools:0.4.4
-  |    +--- org.slf4j:slf4j-api:1.7.13
-  |    +--- com.fasterxml.jackson.core:jackson-databind:2.6.3
-  |    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.6.0 -> 2.6.3
-  |    |    \--- com.fasterxml.jackson.core:jackson-core:2.6.3
-  |    \--- com.fasterxml.jackson.core:jackson-annotations:2.6.3
-  +--- io.vertx:vertx-core:3.2.1
-  ...
-  +--- io.vertx:vertx-web:3.2.1
-  ...
-  +--- org.reflections:reflections:0.9.9
-  |    +--- com.google.guava:guava:15.0
-  |    +--- org.javassist:javassist:3.18.2-GA
-  |    \--- com.google.code.findbugs:annotations:2.0.1
-  \--- org.slf4j:slf4j-api:1.7.13
-
-  ``katharsis-client``
-
-  .. code-block:: bash
-
-  io.katharsis:katharsis-client:bundle:2.6.0
-  +- io.katharsis:katharsis-core:jar:2.6.0:compile
-  |  +- net.jodah:typetools:jar:0.4.4:compile
-  |  +- org.slf4j:slf4j-api:jar:1.7.13:compile
-  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.6.3:compile
-  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.6.3:compile
-  |  \- com.fasterxml.jackson.core:jackson-annotations:jar:2.6.3:compile
-  +- org.reflections:reflections:jar:0.9.9:compile
-  |  +- com.google.guava:guava:jar:15.0:compile
-  |  +- org.javassist:javassist:jar:3.18.2-GA:compile
-  |  \- com.google.code.findbugs:annotations:jar:2.0.1:compile
-  +- com.squareup.okhttp:okhttp:jar:2.7.5:compile
-  |  \- com.squareup.okio:okio:jar:1.6.0:compile
 
 Supported requests
 ------------------
@@ -197,65 +82,15 @@ The example below shows a sample class which contains a definition of a field wh
     // fields, getters and setters
   }
 
-JsonApiToOne
-~~~~~~~~~~~~
 
-Indicates an association to single value which needs to be handled by a separate ``RelationshipRepository``.
- A type of the field has to be a valid resource.
+JsonApiRelation
+~~~~~~~~~~~~~~~
 
-The example below shows a sample class which contains this kind of relationship.
-
-
-.. code-block:: java
-
-  @JsonApiResource(type = "tasks")
-  public class Task {
-
-    // ID field
-
-    @JsonApiToOne
-    private Project project;
-
-    // fields, getters and setters
-  }
-
-JsonApiToMany
-~~~~~~~~~~~~~
-
-Indicates an association to many values which need to be handled by a separate ``RelationshipRepository``.
-A type of the field has to be an ``Iterable`` or its derived classes (e.g.``List``) of valid resources.
-By default, relationship is considered to be lazy, that is the relationship is not shown in the Top Level JSON.
-To change that, pass parameter ``@JsonApiToMany(lazy = false)``.
+Indicates an association to either a single value or collection of resources. The type of such fields
+must be a valid resource.
 
 The example below shows a sample class which contains this kind of relationship.
 
-.. code-block:: java
-
-  @JsonApiResource(type = "tasks")
-  public class Task {
-
-    // ID field
-
-    @JsonApiToMany(lazy = false)
-    private List<Project> projects;
-
-    @JsonApiToMany // not shown in Top Level JSON
-    private List<Log> logs;
-
-    // fields, getters and setters
-  }
-
-
-
-JsonApiIncludeByDefault
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Indicates additional resources that should be included by default (will be available
-in included field of Top level JSON object) with every primary resource.
-The field can be added to every relationship defined by ``JsonApiToOne`` or ``JsonApiToMany``.
-Otherwise, ``ResourceException`` will be thrown at the initialization phrase.
-
-The example below shows a sample model with this annotation.
 
 .. code-block:: java
 
@@ -264,39 +99,30 @@ The example below shows a sample model with this annotation.
 
     // ID field
 
-    @JsonApiToOne
-    @JsonApiIncludeByDefault
-    private Project project;
-
-    // fields, getters and setters
-  }
-
-JsonApiLookupIncludeAutomatically
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Field or getter annotated with ``JsonApiLookupIncludeAutomatically`` will be automatically populated by Katharsis on ``GET`` requests.
-It can be added to every relationship defined by ``JsonApiToOne`` or ``JsonApiToMany``.
-
-The example below shows a sample class which will always contain a relationship's resource.
-
-.. code-block:: java
-
-  @JsonApiResource(type = "tasks")
-  public class Task {
-
-    // ID field
-
-    @JsonApiToOne
-    @JsonApiLookupIncludeAutomatically
+    @JsonApiRelation(lookUp=LookupIncludeBehavior.AUTOMATICALLY_WHEN_NULL,serialize=SerializeType.ONLY_ID)
     private Project project;
 
     // fields, getters and setters
   }
 
 
+The optional ``serialize`` parameter specifies how the association should be serialized when making a request.
+There are two things to consider. Whether related resources should be added to the ``include`` section of the 
+response document. And whether the id of related resources should be serialized along with the resource
+in the corresponding ``relationships.[name].data`` section. Either ``LAZY``, ``ONLY_ID`` or ``EAGER`` can be specified:
 
+- ``LAZY`` only serializes the ID and does the inclusion if explicitly requested by the ``include`` URL parameter. This is the default.
+- ``ONLY_ID`` always serializes the ID, but does only to an inclusion  if explicitly requested by the ``include`` URL parameter.
+- ``EAGER`` always both serializes the ID and does an inclusion.
+  
+There are two possibilities of how related resources are fetched. Either the requested repository directly
+returns related resources with the returned resources. Or Katharsis can take-over that
+work by doing nested calls to the corresponding ``RelationshipRepositoryV2`` implementations. The behavior
+is controlled by the optional ``lookUp`` parameter. There are three options:
 
-
+- 'NONE' makes the requested repository responsible for returning related resources. This is the default.
+- 'AUTOMATICALLY_WHEN_NULL' will let Katharsis lookup related resources if not already done by the requested repository.
+- 'AUTOMATICALLY_ALWAYS' will force Katharsis to always lookup related resource regardless whether it is already done by the requested repository.
 
 
 
@@ -371,30 +197,13 @@ See http://jsonapi.org/format/#document-links for more information about linking
 Repositories
 ------------
 
-The model definition must have corresponding resource repository.
-In addition, each relation also must have a corresponding repository.
-
-Those repositories can be defined in one of the two ways:
-
-* Implementing a repository interface:
+The modelled resources must be complemented by a corresponding
+repository implementation. This is achieved by implementing
+one of those two repository interfaces:
 
   * ResourceRepositoryV2 for a resource
   * RelationshipRepositoryV2 for resource relationships
 
-* Annotated with a repository annotation:
-
-  * JsonApiResourceRepository for a resource
-  * JsonApiRelationshipRepository for resource relationships
-  
-Both approaches have their merits. But note that the use of interfaces has
-one main advantage over annotated repositories: the interfaces are  
-supported by ``katharsis-client``. Applications may declare their own 
-interfaces, extending the ones of Katharsis with type arguments
-and additional actions. On the server side, repository interfaces
-are implemented by the repository implementations. On the client side,
-``katharsis-client`` can automatically create stubs to have 
-type-safe access to remote repositories. More information is available
-with the client documentation further down.
 
 
 ResourceRepositoryV2
@@ -411,12 +220,12 @@ The methods are as follows:
   It should return an entity with associated relationships.
 
 * ``findAll(QuerySpec querySpec)``
-  Search for all of the resources. An instance of QueryParams can be used if necessary.
+  Search for all of the resources. An instance of QuerySpec can be used if necessary.
   If no resources can be found an empty Iterable or null must be returned.
   It should return entities with associated relationships.
 
 * ``findAll(Iterable<ID>ids, QuerySpec querySpec)``
-  Search for resources constrained by a list of identifiers. An instance of QueryParams can be used if necessary.
+  Search for resources constrained by a list of identifiers. An instance of QuerySpec can be used if necessary.
   If no resources can be found an empty Iterable or null must be returned.
   It should return entities with associated relationships.
 
@@ -585,196 +394,18 @@ and used by both servers and clients:
 
 
 
-Annotated repositories
-~~~~~~~~~~~~~~~~~~~~~~
-
-A resource repository can also be defined using the ``JsonApiResourceRepository`` or ``JsonApiRelationshipRepository`` annotations from ``io.katharsis.repository.annotations`` package.
-
-Defining the repositories this way has two benefits:
-
-* It's not necessary to define all of the methods i.e. read-only resources might have just reading methods defined
-* Additional parameters can be added to the methods like authentication, request headers or cookies
-
-Along with the required parameters for each methods (like the resource identifier in ``JsonApiFindOne``), the default supported type is QueryParams, which provides a set of parsed query parameters.
-Each Katharsis integration provides different set of supported parameters.
-This list can be found in JAX-RS and Servlet integration sections.
-
-A list below defines a mapping of ``ResourceRepository`` methods to annotations:
-
-* ``findOne(ID, QueryParams) -> JsonApiFindOne``
-
-  The first parameter must be a resource's id. This method must return one resource.
-
-* ``findAll(QueryParams) -> JsonApiFindAll``
-
-  This method must return a list of resources.
-
-* ``findAll(Iterable<ID>, QueryParams) -> JsonApiFindAllWithIds``
-
-  The first parameter must be a list of resource ids. This method must return a list of resources.
-
-* ``save(S) -> JsonApiSave``
-
-  The first parameter must be a resource. This method must return one resource.
-
-* ``delete(ID) -> JsonApiDelete``
-
-  The first parameter must be a resource's id.
-
-
-A list below defines a mapping of ``RelationshipRepository`` methods to annotations:
-
-* ``setRelation(T, D_ID, String) -> JsonApiSetRelation``
-
-  The requirements for the method parameters are as follows:
-
-  #. Instance of a source resource
-  #. Instance of a relationship to be set
-  #. Relationship's field name
-
-* ``setRelations(T, Iterable<D_ID>, String) -> JsonApiSetRelations``
-
-  The requirements for the method parameters are as follows:
-
-  #. Instance of a source resource
-  #. ``Iterable`` of relationships to be set
-  #. Relationship's field name
-
-* ``addRelations(T, Iterable<D_ID>, String) -> JsonApiAddRelation``
-
-  The requirements for the method parameters are as follows:
-
-  #. Instance of a source resource
-  #. Iterable of relationships to be add
-  #. Relationship's field name
-
-* ``removeRelations(T, Iterable<D_ID>, String) -> JsonApiRemoveRelation``
-
-  The requirements for the method parameters are as follows:
-
-  #. Instance of a source resource
-  #. Iterable of relationships to be removed
-  #. Relationship's field name
-
-* ``findOneTarget(T_ID, String, QuerySpec) -> JsonApiFindOneTarget``
-
-  The requirements for the method parameters are as follows:
-
-  #. An identifier of a source resource
-  #. Relationship's field name
-  #. The method has to return a resources.
-
-* ``findManyTargets(T_ID, String, QuerySpec) -> JsonApiFindManyTargets``
-
-  The requirements for the method parameters are as follows:
-
-  #. An identifier of a source resource
-  #. Relationship's field name
-  #. The method has to return an Iterable with resources.
-
-
 
 Query parameters
 ----------------
 
-Katharsis has defined set of query parameters which can be used by the framework during data retrieval and by a developer to perform other operations.
-All of the types of parameters can be accessed with the either QueryParams or QuerySpec object in repository methods.
+Katharsis passes JSON API query parameters to repositories trough a QuerySpec parameter. It holds 
+request parameters like sorting and filtering specified by JSON API. The subsequent
+sections will provide a number of example. 
 
 
-QuerySpec vs. QueryParams
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Note that if you are new to Katharsis and have setup your applications based on the
-examples, you can skip this section. Everything is already properly setup for you.
-
-QueryParams is the traditional query api of Katharsis. QuerySpec is a new API 
-with the purpose of simplifying the implementation of repositories and offering 100% JSON API compliance
-See the next section for more information about JSON API compliance.
-
-QuerySpec is a drop-in replacement for QueryParams in annotated repositories.
-``ResourceRepository`` and ``RelationshipRepository`` make use of QueryParams.
-``ResourceRepositoryV2`` and ``RelationshipRepositoryV2`` make use of QuerySpec.
-
-For the time being, both QueryParams and QuerySpec are fully supported. But
-QueryParams will be deprecated at some point and the use of QuerySpec is highly
-recommended. It is also possible to mix the use of both classes to gradually move
-from QueryParams to QuerySpec. Katharsis is able to internally 
-convert QueryParams to a QuerySpec. No changes necessary.
-
-The next section outlines the necessary changes in the setup procedure to gain JSON API compliance.
 
 
-JSON API compliance
-~~~~~~~~~~~~~~~~~~~~
 
-Note that if you are new to Katharsis and have setup your applications based on the
-examples, you can skip this section. Everything is already properly setup for you.
-
-The subsequent sections outline URL conventions to query resources.
-QueryParams does not fully adhere to the JSON API specification and instead
-provides a number of improvements over the specification. QuerySpec strives to offer both,
-JSON API compliance and some more advanced URL patterns.
-
-Most notably, QuerySpec supports the ordered sorting on multiple attributes 
-by providing an ordered list of those sorted attributes. And QueryParams 
-introduced support to not only sort and filter requested resources, but also included related resources.
-Because of this, sort and filter parameters require an additional type passed in the parameter name.
-With QuerySpec this type becomes optional and the requested (root) type is used by default. The
-following two requests are equivalent:
-
-``GET /tasks/?sort[tasks]=!shortName,name``
-
-and more simply just:
-
-``GET /tasks/?sort=-shortName,name``
-
-In order to enable the JSON API compliant URL handling, a ``QuerySpecDeserializer`` instead of ``QueryParamsBuilder``
-has to be provided when setting up Katharsis (see the corresponding documentation for the
-various technology stacks). Typically the default implementation ``DefaultQuerySpecDeserializer``
-is perfectly fine. In JAX-RS it looks like:
-
-.. code-block:: java
-
-	@ApplicationPath("/")
-	public class MyApplication extends Application {
-	
-		@Override
-		public Set<Object> getSingletons() {
-			DefaultQuerySpecDeserializer querySpecDeserializer = new DefaultQuerySpecDeserializer();
-			KatharsisFeature feature = new KatharsisFeature(new ObjectMapper(), querySpecDeserializer, serviceLocator);
-			return Collections.singleton((Object)feature);
-		}
-	}
-	
-or just
-
-
-.. code-block:: java
-
-	@ApplicationPath("/")
-	public class MyApplication extends Application {
-	
-		@Override
-		public Set<Class<?>> getClasses() {
-			return Collections.singleton(Katharsis.class);
-		}
-	}
-
-	
-Have a look at the examples. All of them are setup to use QuerySpec. 
-	
-``DefaultQuerySpecDeserializer`` provides some customization options:
-
-* ``setDefaultLimit(Long)``
-	Sets the page limit if none is specified by the request.
-	
-* ``setIgnoreUnknownAttributes(boolean)``
-	DefaultQuerySpecDeserializer validates all passed parameters against the domain model and fails
-	if one of the attributes is unknown. This flag allows to disable that check in case the should be necessary.
-
-Note that *QueryParams is not working with the new serializer*. This means repositories must be 
-migrated to QuerySpec first. This can happen gradually or in one step. Katharsis
-internally converts QueryParams to QuerySpec where necessary as long as the old serializer is in use.
 
 
 Filtering
@@ -783,19 +414,10 @@ Filtering
 Resource filtering can be achieved by providing parameters which start with ``filter``.
 The format for filters: ``filter[ResourceType][property|operator]([property|operator])* = "value"``
 
-QuerySpec examples:
-
 * ``GET /tasks/?filter[name]=Super task``
 * ``GET /tasks/?filter[name][EQ]=Super task``
 * ``GET /tasks/?filter[tasks][name]=Super task``
 * ``GET /tasks/?filter[tasks][name]=Super task&filter[tasks][dueDate]=2015-10-01``
-
-QueryParams examples:
-
-* ``GET /tasks/?filter[tasks][name]=Super task``
-* ``GET /tasks/?filter[tasks][name]=Super task&filter[tasks][dueDate]=2015-10-01``
-* ``GET /tasks/?filter[tasks][name][EQ]=Super task``
-* ``GET /tasks/?filter[tasks][name][$startWith]=Super&filter[tasks][name][$endWith]=task``
 
 QuerySpec uses the ``EQ`` operator if no operator was provided. Custom operators can be registered
 with ``DefaultQuerySpecDeserializer.addSupportedOperator(..)``. The default operator can be 
@@ -806,34 +428,11 @@ Sorting
 ~~~~~~~
 
 Sorting information for the resources can be achieved by providing ``sort`` parameter.
-QuerySpec uses the standard JSON API format. The QueryParams format for sorting 
-is:  ``sort[ResourceType][property|operator]([property|operator])* = "value"``.
-
-QuerySpec examples:
 
 * ``GET /tasks/?sort=name,-shortName`` 
 * ``GET /tasks/?sort[projects]=name,-shortName&include=projects`` 
   
-QueryParams examples:
 
-* ``GET /tasks/?sort[tasks][name]=asc`` 
-* ``GET /tasks/?sort[tasks][id]=desc`` 
-
-
-Grouping
-~~~~~~~~
-
-.. note::
-
-  Grouping itself is not specified by JSON API itself, but the keyword and format it reserved for today and future use in Katharsis.
-
-Grouping information for the resources can be achieved by providing ``group`` parameter.
-The format for grouping: ``group[ResourceType] = "property(.property)*"``
-
-Examples:
-
-* ``GET /tasks/?group[tasks]=name``
-* ``GET /tasks/?group[users]=name.firstName&include[projects]=team``
 
 Pagination
 ~~~~~~~~~~
@@ -858,17 +457,9 @@ Sparse Fieldsets
 ~~~~~~~~~~~~~~~~
 
 Information about fields to include in the response can be achieved by providing ``fields`` parameter.
-QuerySpec follows again the JSON API specification. QueryParams makes use of this format: ``fields[ResourceType] = "property(.property)*"``.
-
-QuerySpec examples:
 
 * ``GET /tasks/?fields=name``
 * ``GET /tasks/?fields[projects]=name,description&include=projects``
-
-QueryParams examples:
-
-* ``GET /tasks/?fields[tasks][]=name&fields[tasks][]=dueDate``
-* ``GET /tasks/?fields[users]=name.surname&include[tasks]=author``
 
 
 
@@ -889,20 +480,34 @@ Examples:
 
 
 
+DefaultQuerySpecDeserializer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Katharsis make use of ``DefaultQuerySpecDeserializer`` to map URL parameters to a QuerySpec instance.
+This instance is accessible from the various integrations, such as from the ``KatharsisFeature``. It
+provides a number of customization options:
+
+* ``setDefaultLimit(Long)``
+	Sets the page limit if none is specified by the request.
+	
+* ``setMaxPageLimit(Long)``
+	Sets the maximum page limit allowed to be requested.
+	
+* ``setIgnoreUnknownAttributes(boolean)``
+	DefaultQuerySpecDeserializer validates all passed parameters against the domain model and fails
+	if one of the attributes is unknown. This flag allows to disable that check in case the should be necessary.
+	
+Note that appropriate page limits are vital to protect against denial-of-service attacks when working 
+with large data sets!
+
+``DefaultQuerySpecDeserializer`` implements ``QuerySpecDeserializer`` and you may also provide your own
+implementation to further customize its behavior.
+
+
+
 QuerySpec API
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The use of QuerySpec eases the implementation of repositories with a slightly different API compared
-to QueryParams. QueryParams holds parameters for all requested resource types (root and included relations)
-simultaneously. A QuerySpec holds only the the parameters for a single resource type. A repository
-is invoked with the QuerySpec for the requested root type. Because of this, it gives
-direct access to sorting, filtering, pagination and inclusion parameters for the requested
-root resource. If related resources are included in the request, their QuerySpecs 
-can be obtained by calling ``QuerySpec.getRelatedSpec(Class)`` on the root QuerySpec. Next to that,
-QuerySpec simplifies filter handling with a new filter API based on ``FilterSpec`` that should be a 
-good match for most use cases. Compared to QueryParams it takes care of distinguishing attributes 
-from operators in a String like ``tasks[title][EQ]=myTitle`` and marshals parameter values from Strings 
-to the corresponding attribute type.  
 
 The API looks like (further setters available as well):
 
@@ -927,6 +532,17 @@ The API looks like (further setters available as well):
 		
 		...	
 	}
+
+
+Note that single QuerySpec holds the parameters for a single resource type and,
+in more complex scenarios, request can lead to multiple QuerySpec instances
+(namely when related resources are also filtered, sorted, etc). A repository
+is invoked with the QuerySpec for the requested root type. If related resources are
+included in the request, their QuerySpecs can be obtained by calling ``QuerySpec.getRelatedSpec(Class)`` on the root QuerySpec. 
+
+ ``FilterSpec`` holds a value of type object. Since URL parameters are passed as String,
+ they get converted to the proper types by the ``DefaultQuerySpecDeserializer``. The 
+ type is determined based on the type of the filtered attribute. 
 
 
 QuerySpec provides a method ``apply`` that allows in-memory sorting, filtering and paging
@@ -1696,5 +1312,49 @@ On the server-side, ``BraveModule`` creates a local span for each accessed repos
 Every request triggers one or more repository accesses (depending on whether 
 relations are included). Note however that ``BraveModule`` does not setup tracing
 for incoming requests. That is the purpose of the JAX-RS/servlet integration of Brave.
+
+
+Security Module
+-------------------------
+
+This is an experimental module that intercepts all repository requests and performs Role-based access
+control. Have a look at the ``SecurityModule`` and the related ``SecurityConfig`` class.
+A setup can looks as follows:
+
+
+.. code-block:: java
+
+	Builder builder = SecurityConfig.builder();
+	builder.permitRole("allRole", ResourcePermission.ALL);
+	builder.permitRole("getRole", ResourcePermission.GET);
+	builder.permitRole("patchRole", ResourcePermission.PATCH);
+	builder.permitRole("postRole", ResourcePermission.POST);
+	builder.permitRole("deleteRole", ResourcePermission.DELETE);
+	builder.permitRole("taskRole", Task.class, ResourcePermission.ALL);
+	builder.permitRole("taskReadRole", Task.class, ResourcePermission.GET);
+	builder.permitRole("projectRole", Project.class, ResourcePermission.ALL);
+	builder.permitAll(ResourcePermission.GET);
+	builder.permitAll(Project.class, ResourcePermission.POST);
+	securityModule = SecurityModule.newServerModule(builder.build());
+
+The security module further properly serializes javax.security 
+authorization and authentication exceptions. As such it is also recommended to be 
+used by KatharsisClient.
+
+
+Meta Module
+-------------------------
+
+This is a (very) experimental module that exposes the internal workings of Katharsis as JSON API repositories.
+It lets you browse the set of available resources, their types, their attributes, etc. 
+A setup can look as follows:
+
+.. code-block:: java
+
+		MetaModule metaModule = MetaModule.create();
+		metaModule.addMetaProvider(new ResourceMetaProvider());
+
+To learn more about the set of available resources, have a look at the ``MetaElement`` class and all its subclasses,
+most notably ``MetaResource`` and ``MetaResourceRepository``.
 
 
