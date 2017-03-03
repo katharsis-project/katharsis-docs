@@ -4,6 +4,27 @@ How to use Katharsis in your applications
 Katharsis provides means to easily expose resources over the REST interface. If you want to take a deeper look on the concepts behind Katharsis, this is page for you!
 
 
+Release Notes
+--------------
+
+
+3.0 (soon)
+~~~~~~~~~~~~~~~
+
+- a new, more powerful JsonApiRelation annotation easing the declarations of relationships.
+- QueryParams and Repository annotations have been deprecated (but resource annotations not!) and moved to a legacy package. Interface-based repositories and QuerySpec are the recommended APIs.
+- major cleanup release with more test cases.
+- some few package changes to non-internal classes and interfaces.
+- serialization layer has been completely rewritten and is more robust/easier to understand.
+- a new DocumentFilter has been introduced that allows to modify incoming requests and responses.
+- many classes considered to be non-public have been moved to internal packages.
+- an experimental security module.
+- a very experimental meta module.
+- a rewritten servlet integratino for Katharsis based on KatharsisBoot.
+
+Features deprecated with this 3.0 releases remain support for quite some time to come. 
+
+
 Requirements
 ------------
 
