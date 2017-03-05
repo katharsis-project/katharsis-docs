@@ -223,7 +223,7 @@ repository implementation. This is achieved by implementing
 one of those two repository interfaces:
 
   * ResourceRepositoryV2 for a resource
-  * RelationshipRepositoryV2 for resource relationships
+  * RelationshipRepositoryV2 resp. BulkRelationshipRepositoryV2 for resource relationships
 
 
 
@@ -353,6 +353,17 @@ For this to work, relations must be set up bidirectionally with the ``opposite``
 	
 	    ...
 	}
+
+
+BulkRelationshipRepositoryV2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BulkRelationshipRepositoryV2 extends RelationshipRepositoryV2 and provides an additional 
+``findTargets`` method. It allows to fetch a relation for multiple resources at once.
+It is recommended to make use of this implementation if a relationship is loaded frequently
+(either by a eager declaration or trough the ``include`` parameter) and it is costly to
+fetch that relation. RelationshipRepositoryBase provides a default implementation where
+``findOneTarget`` and ``findManyTargets`` forward calls to the bulk ``findTargets``.
 
 
 
