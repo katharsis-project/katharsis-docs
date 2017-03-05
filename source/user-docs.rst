@@ -22,7 +22,26 @@ Release Notes
 - a very experimental meta module.
 - a rewritten servlet integratino for Katharsis based on KatharsisBoot.
 
-Features deprecated with this 3.0 releases remain support for quite some time to come. 
+Features deprecated with this 3.0 releases remain support for quite some time to come. As such 
+*Katharsis 3.0 remains backwards compatible with 2.x*. Some small migrations steps are necessary:
+
+- fix package imports
+- Replace all usages of QuerySpec<Xy>Repository with <Xy>RepositoryV2. 
+
+In the medium/long-term make sure to avoid and drop the usage of any deprecated legacy API (contained in the io.katharsis.legacy packages):
+
+- make use of interface instead of annotation-based repositories.
+- make use of QuerySpec instead of QueryParams. You can perform this step gradually. Once that is completed, you can also to the next step.
+- move away from DefaultQueryParamsParser in favor of DefaultQuerySpecDeserializer. Note that this step can only be done once
+  all the QueryParams-based repositories have been migrated to QuerySpec. This will make your repositories fully JSON-API compliant
+  (``sort`` parameter now adheres to the official specification, see below for examples).
+- (recommendation) Avoid the use of ``KatharsisProperties.RESOURCE_SEARCH_PACKAGE`` and rely on a proper dependency management setup instead. Katharsis
+  comes out-of-the-box with a CDI and Spring integration, both implementing the ``ServiceDiscovery`` interface.
+- make use of ``JsonApiRelation`` instead of ``JsonApiToMany``, ``JsonApiToOne``, ``JsonApiLookupIncludeAutomatically`` and ``JsonApiIncludeByDefault``.
+  
+
+
+
 
 
 Requirements
@@ -1070,7 +1089,7 @@ Advanced usage that shows how you can inject custom parameters in Katharsis repo
 Client
 -----------------
 
-Since v2.6.0 there is a new Katharsis client support for Java projects to allow
+There is a Katharsis client for Java projects to allow
 communicating with JSON-API compliant servers. Two http client libraries are supported:
 
 * `OkHttp <http://square.github.io/okhttp>`
@@ -1087,9 +1106,9 @@ URL and the location to the package where the models are defined.
 
 The client has three main methods:
 
-* ``KatharsisClient#getResourceRepository(Class)`` to obtain a resource repository stub from an existing repository interface.
-* ``KatharsisClient#getQuerySpecRepository(Class)`` to obtain a generic resource repository stub from the provided resource type.
-* ``KatharsisClient#getQuerySpecRepository(Class, Class)`` to obtain a generic relationship repository stub from the provided source and target resource types.
+* ``KatharsisClient#getRepositoryForInterface(Class)`` to obtain a resource repository stub from an existing repository interface.
+* ``KatharsisClient#getRepositoryForType(Class)`` to obtain a generic resource repository stub from the provided resource type.
+* ``KatharsisClient#getRepositoryForType(Class, Class)`` to obtain a generic relationship repository stub from the provided source and target resource types.
 
 The interface of the repositories is as same as defined in `Repositories`_ section.
 
@@ -1098,13 +1117,28 @@ An example of the usage:
 .. code-block:: java
 
   KatharsisClient client = new KatharsisClient("http://localhost:8080/api");
-  ResourceRepositoryV2<Task, Long> taskRepo = client.getQuerySpecRepository(Task.class);
+  ResourceRepositoryV2<Task, Long> taskRepo = client.getRepositoryForType(Task.class);
   List<Task> tasks = taskRepo.findAll(new QuerySpec(Task.class));
 
 Have a look at, for example, the QuerySpecClientTest to see more examples of how it is used.
 
 
-Enjoy.
+
+HTTP customization
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to hook into the HTTP implementation used by Katharsis (OkHttp or Apache). 
+Make use of ``KatharsisClient#getHttpAdapter()`` and cast it to either 
+``HttpClientAdapter`` or ``OkHttpAdapter``. Both implementations provide a 
+``addListener`` method, which in turn gives access to the native builder used to construct
+the respective HTTP client implementation. This allows to cover various use cases:
+
+- add custom request headers (security, tracing, etc.)
+- collect statistics
+- ...
+
+You may have a look at ``katharsis-brave`` for an advanced example.
+
 
 
 Modules
@@ -1125,16 +1159,61 @@ module API.
 Request Filtering
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``Filter`` interface provided by Katharsis allows to intercept incoming requests and do 
-any kind of validation, changes, monitoring, transaction handling, etc. ``Filter`` can be 
+Katharsis provides three different, complementing mechanisms to hook into the request processing.
+
+
+
+The ``DocumentFilter`` interface allows to intercept incoming requests and do 
+any kind of validation, changes, monitoring, transaction handling, etc. ``DocumentFilter`` can be 
 hooked into Katharsis by setting up a module and registering the filter to the 
-``ModuleContext``.
+``ModuleContext``. Not that for every request, this interface is called exactly once.
 
 A request may span multiple repository accesses. To intercept the actual repository requests,
 implement the ``RepositoryFilter`` interface. ``RepositoryFilter`` has a number of methods
 that allow two intercept the repository request at different stages. Like ``Filter`` it can be 
 hooked into Katharsis by setting up a module and registering the filter to the 
 ``ModuleContext``. 
+
+Similar to ``RepositoryFilter`` it is possible to decorate a repository with another repository
+implementing the same Katharsis repository interfaces. The decorated repository instead of 
+the actual repository will get called and it is up to the decorated repository of how to proceed
+with the request, usually by calling the actual repository. ``RepositoryDecoratorFactory``
+can be registered with ``ModuleContext.addRepositoryDecoratorFactory``. The factory gets
+notified about every repository registration and is then free do decorate it or not.
+
+
+		
+
+
+Integrate third-party data stores
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The core of Katharsis is quite flexible when it comes to implementing repositories. As such, it is 
+not mandatory to make use of the Katharsis annotations and conventions. Instead, it is also
+(likely) possible to integrate an existing data store setup like JPA, JDBC, ElasticSearch, etc.
+into Katharsis. For this purpose a module can provide custom implementations of 
+``ResourceInformationBuilder`` and ``RepositoryInformationBuilder`` trough
+``ModuleContext.addResourceInformationBuilder`` and ``ModuleContext.addRepositoryInformationBuilder``. 
+For example, the JpaModule of  ``katharsis-jpa`` makes use of that to read JPA instead of Katharsis annotations. 
+Such a module can then register additional (usually dynamic) repositories with 
+``ModuleContext.addRepository``.
+
+Integrate into a dependency injection environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Katharsis comes with out-of-the-box support for Spring and CDI. Both of them implement 
+``ServiceDiscovery``. You may provide your own implementation which can be hooked into the
+various Katharsis integrations, like the KatharsisFeature. Modules have access to that
+``ServiceDiscover`` trough the ``ModuleContext``.
+
+Let a module hook into the Katharsis HTTP client implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Modules for the Katharsis client can additionally implement ``HttpAdapterAware``. It gives
+the module access to the underlying HTTP client implementation and allows abitrary 
+customizations of it. Have a look at the Katharsis client documentation for more information.
+
+
 
 
 JPA Module
@@ -1378,7 +1457,8 @@ Meta Module
 -------------------------
 
 This is a (very) experimental module that exposes the internal workings of Katharsis as JSON API repositories.
-It lets you browse the set of available resources, their types, their attributes, etc. 
+It lets you browse the set of available resources, their types, their attributes, etc. For example,
+Katharsis UI make use of the meta module to implement auto-completing of input fields.
 A setup can look as follows:
 
 .. code-block:: java
@@ -1388,5 +1468,7 @@ A setup can look as follows:
 
 To learn more about the set of available resources, have a look at the ``MetaElement`` class and all its subclasses,
 most notably ``MetaResource`` and ``MetaResourceRepository``.
+
+
 
 
