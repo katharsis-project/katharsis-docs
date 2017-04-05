@@ -8,7 +8,7 @@ Release Notes
 --------------
 
 
-3.0 (soon)
+3.0 
 ~~~~~~~~~~~~~~~
 
 - a new, more powerful JsonApiRelation annotation easing the declarations of relationships.
@@ -18,8 +18,6 @@ Release Notes
 - serialization layer has been completely rewritten and is more robust/easier to understand.
 - a new DocumentFilter has been introduced that allows to modify incoming requests and responses.
 - many classes considered to be non-public have been moved to internal packages.
-- an experimental security module.
-- a very experimental meta module.
 - a rewritten servlet integratino for Katharsis based on KatharsisBoot.
 
 Features deprecated with this 3.0 releases remain support for quite some time to come. As such 
@@ -40,8 +38,12 @@ In the medium/long-term make sure to avoid and drop the usage of any deprecated 
 - make use of ``JsonApiRelation`` instead of ``JsonApiToMany``, ``JsonApiToOne``, ``JsonApiLookupIncludeAutomatically`` and ``JsonApiIncludeByDefault``.
   
 
+3.1 (soon)
+~~~~~~~~~~~~~~~
 
-
+- an experimental security module.
+- a very experimental meta module.
+- katharsis-ui
 
 
 Requirements
@@ -672,7 +674,9 @@ Sample exception mapper:
   }
 
 Exception mapper classes will be scanned for and registered during application startup.
-They should be located in your resource search package.
+They should be located in your resource search package. If katharsis-cdi or katharsis-spring
+is used, the annotation is not necessary and it will instead be picked up through the
+dependency mechanisms.
 
 An exception should be mapped to an ErrorResponse object.
 It consists of an HTTP status and ErrorData (which is consistent with JSON API error structure).
